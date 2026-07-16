@@ -22,7 +22,7 @@ export default function Workspace() {
 
   return (
     <div className="workspace-shell">
-      <TopNav />
+      <AppHeader />
 
       <div className="workspace-actions-bar">
         <button className="secondary-action workspace-new-session" onClick={() => navigate("/new-session")}>
