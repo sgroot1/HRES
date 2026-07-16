@@ -6,6 +6,7 @@ import Workspace from "./components/workspace/Workspace";
 import NewSession from "./pages/NewSession";
 import SetupDatabase from "./pages/SetupDatabase";
 import SetupCompare from "./pages/SetupCompare";
+import SetupEditor from "./pages/SetupEditor";
 import Runs from "./pages/Runs";
 import PerformanceDashboard from "./pages/PerformanceDashboard";
 
@@ -24,7 +25,9 @@ export default function App() {
               <Route path="/database" element={<SetupDatabase />} />
               <Route path="/runs" element={<Runs />} />
               <Route path="/dashboard" element={<PerformanceDashboard />} />
+              <Route path="/performance" element={<Navigate to="/dashboard" replace />} />
               <Route path="/compare" element={<SetupCompare />} />
+              <Route path="/editor" element={<SetupEditor />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
