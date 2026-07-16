@@ -14,6 +14,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="app">
+        <AppHeader />
+
         <div className="page-shell">
           <div className="page-content">
             <Routes>
