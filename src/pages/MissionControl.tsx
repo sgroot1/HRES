@@ -10,10 +10,6 @@ export default function MissionControl() {
 
   return (
     <div className="mission-control">
-      <header className="mission-header">
-        <h1>HRES</h1>
-        <p>Helios Race Engineering Suite</p>
-      </header>
 
       <div className="mission-dashboard">
         <CurrentSessionCard />
