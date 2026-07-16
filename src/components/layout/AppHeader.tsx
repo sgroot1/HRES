@@ -1,116 +1,136 @@
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { useRunStore } from "../../store/runStore";
 import { useSessionStore } from "../../store/sessionStore";
 import { useSetupStore } from "../../store/setupStore";
 
-const navigation = [
-  { label: "Control", path: "/" },
-  { label: "Setup", path: "/workspace" },
-  { label: "Runs", path: "/runs" },
-  { label: "Performance", path: "/dashboard" },
-  { label: "Database", path: "/database" },
-  { label: "Compare", path: "/compare" },
-];
+type CarKey = "sdm26" | "mustang";
+
+type NavItem = {
+  label: string;
+  path: string;
+};
+
+type CarProfile = {
+  optionLabel: string;
+  subtitle: string;
+  tabs: NavItem[];
+};
+
+const STORAGE_KEY = "hres.selectedCarProfile";
+
+const CAR_PROFILES: Record<CarKey, CarProfile> = {
+  sdm26: {
+    optionLabel: "SDM26 · Autocross",
+    subtitle: "AUTOCROSS / TEST DAY",
+    tabs: [
+      { label: "Control", path: "/" },
+      { label: "Setup", path: "/workspace" },
+      { label: "Runs", path: "/runs" },
+      { label: "Performance", path: "/dashboard" },
+      { label: "Database", path: "/database" },
+      { label: "Compare", path: "/compare" },
+    ],
+  },
+  mustang: {
+    optionLabel: "Mustang · Endurance",
+    subtitle: "ENDURANCE / RACE WEEKEND",
+    tabs: [
+      { label: "Control", path: "/" },
+      { label: "Setup", path: "/sportscarsetup" },
+      { label: "Runs", path: "/runs" },
+      { label: "Dashboard", path: "/dashboard" },
+      { label: "Endurance", path: "/endurance" },
+      { label: "Database", path: "/database" },
+    ],
+  },
+};
 
 export default function AppHeader() {
-
   const navigate = useNavigate();
   const location = useLocation();
 
-  const session = useSessionStore(
-    (state) => state.session
-  );
+  const session = useSessionStore((state) => state.session);
+  const setup = useSetupStore((state) => state.currentSetup);
+  const run = useRunStore((state) => state.currentRun);
 
-  const setup = useSetupStore(
-    (state) => state.currentSetup
-  );
+  const [carKey, setCarKey] = useState<CarKey>("sdm26");
 
-  const run = useRunStore(
-    (state) => state.currentRun
-  );
+  useEffect(() => {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+
+    if (saved === "mustang" || saved === "sdm26") {
+      setCarKey(saved);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEY, carKey);
+  }, [carKey]);
+
+  const profile = useMemo(() => CAR_PROFILES[carKey], [carKey]);
+
+  const activeLabel =
+    setup?.name ??
+    session?.name ??
+    profile.subtitle;
 
   return (
-
     <header className="topnav-shell">
-
       <div className="topnav-brand">
-
-        <div className="topnav-logo">
-
-          H
-
-        </div>
+        <div className="topnav-logo">H</div>
 
         <div className="topnav-brand-text">
-
-          <div className="topnav-title">
-
-            HRES
-
-          </div>
-
-          <div className="topnav-subtitle">
-
-            {setup?.name ??
-              session?.name ??
-              "Helios Race Engineering Suite"}
-
-          </div>
-
+          <div className="topnav-title">HELIOS</div>
+          <div className="topnav-subtitle">SETUP MANAGER</div>
         </div>
 
+        <select
+          className="topnav-car-select"
+          value={carKey}
+          onChange={(e) => setCarKey(e.target.value as CarKey)}
+          aria-label="Select car"
+        >
+          {Object.entries(CAR_PROFILES).map(([key, value]) => (
+            <option key={key} value={key}>
+              {value.optionLabel}
+            </option>
+          ))}
+        </select>
+
+        <div className="topnav-brand-detail">
+          {activeLabel}
+        </div>
       </div>
 
       <nav className="topnav-nav">
+        {profile.tabs.map((item) => {
+          const active = location.pathname === item.path;
 
-        {navigation.map((item) => (
-
-          <button
-            key={item.path}
-            type="button"
-            onClick={() => navigate(item.path)}
-            className={
-              location.pathname === item.path
-                ? "topnav-pill active"
-                : "topnav-pill"
-            }
-          >
-
-            {item.label}
-
-          </button>
-
-        ))}
-
+          return (
+            <button
+              key={item.path}
+              type="button"
+              onClick={() => navigate(item.path)}
+              className={active ? "topnav-pill active" : "topnav-pill"}
+            >
+              {item.label}
+            </button>
+          );
+        })}
       </nav>
 
       <div className="topnav-status">
-
         <span className="topnav-chip">
-
           <span className="status-dot" />
-
-          Engineering
-
+          LIVE
         </span>
 
         <span className="topnav-chip muted">
-
-          {session?.vehicle ?? "--"}
-
-          {" • "}
-
-          {run?.driver ??
-            session?.driver ??
-            "--"}
-
+          {session?.vehicle ?? "NO SESSION"} • {run?.driver ?? session?.driver ?? "--"}
         </span>
-
       </div>
-
     </header>
-
   );
-
 }
