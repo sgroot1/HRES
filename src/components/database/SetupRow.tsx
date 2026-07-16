@@ -1,54 +1,99 @@
 import { Setup } from "../../types/setup";
 
 interface Props {
-
   setup: Setup;
-
   onOpen(): void;
-
   onDuplicate(): void;
-
   onDelete(): void;
-
 }
 
 export default function SetupRow({
-
   setup,
-
   onOpen,
-    const updatedDate = new Date(setup.updatedAt).toLocaleDateString();
-    const weather = setup.general.weather || "Autocross";
-    const track = setup.general.track || "Track not set";
+  onDuplicate,
+  onDelete,
+}: Props) {
 
-    return (
-      <div className="setup-card-row">
-        <div className="setup-card-head">
-          <span className="setup-card-version">V{setup.version}</span>
-          <span className="setup-card-date">{updatedDate}</span>
-        </div>
+  const updatedDate = new Date(
+    setup.updatedAt
+  ).toLocaleDateString();
 
-        <div className="setup-card-body">
-          <h3>{setup.name}</h3>
-          <p>{weather}</p>
-          <p>{track}</p>
-        </div>
+  const weather =
+    setup.general.weather || "Not Specified";
 
-        <div className="setup-card-actions">
-          <button className="setup-card-edit" onClick={onOpen}>
-            Edit Setup
-          </button>
+  const track =
+    setup.general.track || "Track not set";
 
-          <button className="setup-card-link" onClick={onDuplicate}>
-            Duplicate
-          </button>
+  return (
 
-          <button className="setup-card-link" onClick={onDelete}>
-            Delete
-          </button>
-        </div>
+    <div className="setup-card-row">
+
+      <div className="setup-card-head">
+
+        <span className="setup-card-version">
+
+          V{setup.version}
+
+        </span>
+
+        <span className="setup-card-date">
+
+          {updatedDate}
+
+        </span>
+
       </div>
-    );
+
+      <div className="setup-card-body">
+
+        <h3>
+
+          {setup.name}
+
+        </h3>
+
+        <p>
+
+          {weather}
+
+        </p>
+
+        <p>
+
+          {track}
+
+        </p>
+
+      </div>
+
+      <div className="setup-card-actions">
+
+        <button
+          className="setup-card-edit"
+          onClick={onOpen}
+        >
+
+          Open
+
+        </button>
+
+        <button
+          className="setup-card-link"
+          onClick={onDuplicate}
+        >
+
+          Duplicate
+
+        </button>
+
+        <button
+          className="setup-card-link"
+          onClick={onDelete}
+        >
+
+          Delete
+
+        </button>
 
       </div>
 
