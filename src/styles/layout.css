@@ -68,7 +68,33 @@
 /* ==========================================================
    ENGINEERING HEALTH
 ========================================================== */
+.health-text{
 
+    display:flex;
+
+    flex-direction:column;
+
+    gap:4px;
+
+}
+
+.health-text strong{
+
+    color:var(--text);
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+.health-text small{
+
+    color:var(--text-secondary);
+
+    font-size:12px;
+
+}
 .health-card{
 
     background:var(--panel);
