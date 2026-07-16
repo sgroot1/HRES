@@ -1,7 +1,4 @@
 import { ChangeEvent, useRef, useState } from "react";
-
-import TopNav from "../components/layout/TopNav";
-
 import RunList from "../components/editor/runs/RunList";
 import NewRunDialog from "../components/editor/runs/NewRunDialog";
 import RunLogSheet from "../components/editor/runs/RunLogSheet";
