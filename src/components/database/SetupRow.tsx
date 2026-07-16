@@ -13,92 +13,13 @@ export default function SetupRow({
   onDuplicate,
   onDelete,
 }: Props) {
-
-  const updatedDate = new Date(
-    setup.updatedAt
-  ).toLocaleDateString();
-
-  const weather =
-    setup.general.weather || "Not Specified";
-
-  const track =
-    setup.general.track || "Track not set";
-
   return (
+    <div>
+      <h3>{setup.name}</h3>
 
-    <div className="setup-card-row">
-
-      <div className="setup-card-head">
-
-        <span className="setup-card-version">
-
-          V{setup.version}
-
-        </span>
-
-        <span className="setup-card-date">
-
-          {updatedDate}
-
-        </span>
-
-      </div>
-
-      <div className="setup-card-body">
-
-        <h3>
-
-          {setup.name}
-
-        </h3>
-
-        <p>
-
-          {weather}
-
-        </p>
-
-        <p>
-
-          {track}
-
-        </p>
-
-      </div>
-
-      <div className="setup-card-actions">
-
-        <button
-          className="setup-card-edit"
-          onClick={onOpen}
-        >
-
-          Open
-
-        </button>
-
-        <button
-          className="setup-card-link"
-          onClick={onDuplicate}
-        >
-
-          Duplicate
-
-        </button>
-
-        <button
-          className="setup-card-link"
-          onClick={onDelete}
-        >
-
-          Delete
-
-        </button>
-
-      </div>
-
+      <button onClick={onOpen}>Open</button>
+      <button onClick={onDuplicate}>Duplicate</button>
+      <button onClick={onDelete}>Delete</button>
     </div>
-
   );
-
 }
