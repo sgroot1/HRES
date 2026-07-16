@@ -75,8 +75,6 @@ export default function SetupDatabase() {
 
   return (
     <div className="app">
-      <TopNav />
-
       <div className="database-shell">
         <section className="database-panel">
           <div className="database-header">
