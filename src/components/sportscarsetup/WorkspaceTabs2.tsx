@@ -1,13 +1,13 @@
 import { useSetupStore } from "../../store/setupStore";
 import { useWorkspaceStore } from "../../context/workspace";
 
-import GeneralSection2 from "../editor/general/GeneralSection2";
-import SuspensionSection2 from "../editor/suspension/SuspensionSection2";
-import EngineSection2 from "../editor/engine/EngineSection2";
+import GeneralSection from "../editor/general/GeneralSection";
+import SuspensionSection from "../editor/suspension/SuspensionSection";
+import EngineSection from "../editor/engine/EngineSection";
 import DaqSection2 from "../editor/daq/DaqSection2";
 import AeroSection2 from "../editor/aero/AeroSection2";
-import PerformanceSection2 from "../editor/performance/PerformanceSection2";
-import DrivetrainSection2 from "../editor/drivetrain/DrivetrainSection2";
+import PerformanceSection from "../editor/performance/PerformanceSection";
+import DrivetrainSection from "../editor/drivetrain/DrivetrainSection";
 
 export default function WorkspaceTabs() {
 
