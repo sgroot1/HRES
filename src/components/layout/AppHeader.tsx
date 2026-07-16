@@ -77,17 +77,17 @@ export default function AppHeader() {
     profile.subtitle;
 
   return (
-    <header className="topnav-shell">
-      <div className="topnav-brand">
-        <div className="topnav-logo">H</div>
+    <header className="appheader-shell">
+      <div className="appheader-brand">
+        <div className="appheader-logo">H</div>
 
-        <div className="topnav-brand-text">
-          <div className="topnav-title">HELIOS</div>
-          <div className="topnav-subtitle">SETUP MANAGER</div>
+        <div className="appheader-brand-text">
+          <div className="appheader-title">HELIOS</div>
+          <div className="appheader-subtitle">SETUP MANAGER</div>
         </div>
 
         <select
-          className="topnav-car-select"
+          className="appheader-car-select"
           value={carKey}
           onChange={(e) => setCarKey(e.target.value as CarKey)}
           aria-label="Select car"
@@ -99,12 +99,12 @@ export default function AppHeader() {
           ))}
         </select>
 
-        <div className="topnav-brand-detail">
+        <div className="appheader-brand-detail">
           {activeLabel}
         </div>
       </div>
 
-      <nav className="topnav-nav">
+      <nav className="appheader-nav">
         {profile.tabs.map((item) => {
           const active = location.pathname === item.path;
 
@@ -113,7 +113,7 @@ export default function AppHeader() {
               key={item.path}
               type="button"
               onClick={() => navigate(item.path)}
-              className={active ? "topnav-pill active" : "topnav-pill"}
+              className={active ? "appheader-pill active" : "appheader-pill"}
             >
               {item.label}
             </button>
@@ -121,13 +121,13 @@ export default function AppHeader() {
         })}
       </nav>
 
-      <div className="topnav-status">
-        <span className="topnav-chip">
+      <div className="appheader-status">
+        <span className="appheader-chip">
           <span className="status-dot" />
           LIVE
         </span>
 
-        <span className="topnav-chip muted">
+        <span className="appheader-chip muted">
           {session?.vehicle ?? "NO SESSION"} • {run?.driver ?? session?.driver ?? "--"}
         </span>
       </div>
