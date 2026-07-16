@@ -63,7 +63,7 @@ export default function Runs() {
 
     <div className="app">
 
-      <TopNav />
+      <AppHeader />
 
       <div className="runs-shell">
         <div className="compare-header runs-header">
