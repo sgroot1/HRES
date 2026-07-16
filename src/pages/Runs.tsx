@@ -62,9 +62,6 @@ export default function Runs() {
   return (
 
     <div className="app">
-
-      <AppHeader />
-
       <div className="runs-shell">
         <div className="compare-header runs-header">
           <div>
