@@ -147,18 +147,10 @@ export default function NewSession() {
               className="primary-action"
               onClick={() => {
                 if (!ready) return;
-
-                createSession({
-                  name: name.trim(),
-                  vehicle: vehicle.trim() || "SDM26",
-                  track,
-                  driver: driver.trim(),
-                  engineer: engineer.trim(),
-                });
-
-                const baselineName = vehicle === "SDM27" ? "SDM27 Baseline" : "SDM26 Baseline";
-                const created = createSetup(baselineName, vehicle);
-                openSetup(created.id);
+                createSession({ name, vehicle, track, driver, engineer });
+                const baseline = createSetup(`${vehicle} Baseline`);
+                openSetup(baseline.id);
+                createRun(baseline.id, driver, track);
 
                 navigate("/workspace");
               }}
