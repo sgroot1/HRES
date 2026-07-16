@@ -73,12 +73,21 @@
 
     display:grid;
 
-    grid-template-columns:1fr 1fr 1.4fr;
+    grid-template-columns:340px 340px minmax(0,1fr);
 
     gap:24px;
 
+    align-items:start;
+
+    margin-bottom:40px;
+
 }
 
+.mission-dashboard > *{
+
+    min-width:0;
+
+}
 .mission-dashboard > *{
 
     margin:0;
@@ -322,14 +331,21 @@
 
 .activity-card{
 
-    margin-bottom:28px;
+    display:flex;
+
+    flex-direction:column;
+
+    height:100%;
 
     background:var(--panel);
 
     border:1px solid var(--border);
 
-    padding:24px;
-    box-shadow:var(--panel-shadow);
+    padding:28px;
+
+    overflow:auto;
+
+    max-height:720px;
 
 }
 
@@ -546,16 +562,17 @@
 
 .current-session-card{
 
+    display:flex;
+
+    flex-direction:column;
+
+    height:100%;
+
     background:var(--panel);
 
     border:1px solid var(--border);
 
     padding:28px;
-
-    margin-bottom:28px;
-    box-shadow:
-        0 10px 24px rgba(0,0,0,0.18),
-        0 0 16px rgba(255,198,39,0.03);
 
 }
 
