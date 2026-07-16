@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 import SearchBar from "../components/database/SearchBar";
 import SetupRow from "../components/database/SetupRow";
-import TopNav from "../components/layout/TopNav";
 
 import { useSetupStore } from "../store/setupStore";
 import { createCatalogStore } from "../data/catalog";
