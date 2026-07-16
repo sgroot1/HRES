@@ -5,10 +5,13 @@ import { useSetupStore } from "../store/setupStore";
 import type { Setup } from "../types/setup";
 
 const visibleSetups = 8;
-const damperOptions = Array.from({ length: 31 }, (_, index) => String(index));
 
 function valueText(value: unknown) {
   return value == null || value === "" ? "--" : String(value);
+}
+
+function boolText(value: unknown) {
+  return value ? "Enabled" : "Disabled";
 }
 
 function compareSectionHead(title: string) {
@@ -20,18 +23,18 @@ function compareSectionHead(title: string) {
   );
 }
 
-function cornerBlock(setup: Setup, highlight = false) {
+function singleValueRow(left: unknown, right: unknown, highlightRight = false) {
   return (
-    <div className={highlight ? "compare-corner-block highlight" : "compare-corner-block"}>
-      <div className="compare-corner-row">{valueText(setup.suspension.lf.cornerWeight)}</div>
-      <div className="compare-corner-row">{valueText(setup.suspension.rf.cornerWeight)}</div>
-      <div className="compare-corner-row">{valueText(setup.suspension.lr.cornerWeight)}</div>
-      <div className="compare-corner-row">{valueText(setup.suspension.rr.cornerWeight)}</div>
-    </div>
+    <>
+      <div className="compare-single-value">{valueText(left)}</div>
+      <div className={highlightRight ? "compare-single-value highlight" : "compare-single-value"}>
+        {valueText(right)}
+      </div>
+    </>
   );
 }
 
-function fourCornerMetric(values: [unknown, unknown, unknown, unknown], highlight = false) {
+function quadBlock(values: [unknown, unknown, unknown, unknown], highlight = false) {
   return (
     <div className={highlight ? "compare-corner-block highlight" : "compare-corner-block"}>
       <div className="compare-corner-row">{valueText(values[0])}</div>
@@ -42,67 +45,43 @@ function fourCornerMetric(values: [unknown, unknown, unknown, unknown], highligh
   );
 }
 
-function matrixBlock(values: [unknown, unknown, unknown, unknown], highlight = false) {
+function compareRow({
+  label,
+  left,
+  right,
+  highlightRight = false,
+}: {
+  label: string;
+  left: unknown;
+  right: unknown;
+  highlightRight?: boolean;
+}) {
   return (
-    <div className={highlight ? "compare-matrix-block highlight" : "compare-matrix-block"}>
-      <div className="compare-matrix-cell">{valueText(values[0])}</div>
-      <div className="compare-matrix-cell">{valueText(values[1])}</div>
-      <div className="compare-matrix-cell">{valueText(values[2])}</div>
-      <div className="compare-matrix-cell">{valueText(values[3])}</div>
+    <div className="compare-sheet-row compare-values-row compare-weight-row">
+      <div className="compare-sticky-label">{label}</div>
+      {singleValueRow(left, right, highlightRight)}
     </div>
   );
 }
 
-function damperBlock(setupId: string, index: number, highlight = false) {
-  const rowLabels = ["FL", "FR", "RL", "RR"];
-  const columnLabels = ["LSB", "HSB", "LSR", "HSR"];
-
-  const valueFor = (rowIndex: number, columnIndex: number) => {
-    const baseValues = [8, 6, 10, 7];
-    const highlightedValues = [5, 6, 7, 7];
-    const values = index === 1 ? highlightedValues : baseValues;
-
-    if (columnIndex === 1) return 6;
-    if (columnIndex === 3) return 7;
-    return values[columnIndex];
-  };
-
+function compareQuadRow({
+  label,
+  left,
+  right,
+  highlightRight = false,
+}: {
+  label: string;
+  left: [unknown, unknown, unknown, unknown];
+  right: [unknown, unknown, unknown, unknown];
+  highlightRight?: boolean;
+}) {
   return (
-    <div
-      key={setupId}
-      className={highlight ? "compare-damper-matrix highlight" : "compare-damper-matrix"}
-    >
-      <div className="compare-damper-header-row">
-        <div className="compare-damper-header-spacer" />
-        {columnLabels.map((label) => (
-          <div key={label} className="compare-damper-header-cell">
-            {label}
-          </div>
-        ))}
+    <div className="compare-sheet-row compare-values-row compare-weight-row compare-alignment-row">
+      <div className="compare-sticky-label">{label}</div>
+      <div className="compare-corner-cell">{quadBlock(left)}</div>
+      <div className={highlightRight ? "compare-corner-cell active" : "compare-corner-cell"}>
+        {quadBlock(right, highlightRight)}
       </div>
-
-      {rowLabels.map((rowLabel, rowIndex) => (
-        <div key={rowLabel} className="compare-damper-value-row">
-          <div className="compare-damper-row-label">{rowLabel}</div>
-          {columnLabels.map((columnLabel, columnIndex) => {
-            const value = valueFor(rowIndex, columnIndex);
-
-            return (
-              <select
-                key={`${rowLabel}-${columnLabel}`}
-                className="compare-damper-cell"
-                defaultValue={String(value)}
-              >
-                {damperOptions.map((option) => (
-                  <option key={`${rowLabel}-${columnLabel}-${option}`} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            );
-          })}
-        </div>
-      ))}
     </div>
   );
 }
@@ -110,17 +89,10 @@ function damperBlock(setupId: string, index: number, highlight = false) {
 export default function SetupCompare() {
   const setups = useSetupStore((state) => state.setups);
   const openSetup = useSetupStore((state) => state.openSetup);
-  const loadExampleSetups = useSetupStore((state) => state.loadExampleSetups);
   const navigate = useNavigate();
 
   const [leftId, setLeftId] = useState("");
   const [rightId, setRightId] = useState("");
-
-  useEffect(() => {
-    if (!setups.length) {
-      loadExampleSetups();
-    }
-  }, [loadExampleSetups, setups.length]);
 
   useEffect(() => {
     if (!leftId && setups[0]) {
@@ -151,6 +123,10 @@ export default function SetupCompare() {
     navigate("/workspace");
   };
 
+  const handleOpenDatabase = () => {
+    navigate("/database");
+  };
+
   return (
     <div className="compare-shell compare-sheet-shell">
       <div className="compare-header compare-sheet-header">
@@ -158,6 +134,7 @@ export default function SetupCompare() {
           <div className="compare-kicker">Setup Sheet</div>
           <h1>Setup Compare</h1>
         </div>
+
         <div className="compare-header-meta">
           <span>vs previous</span>
           <span>vs baseline</span>
@@ -194,10 +171,7 @@ export default function SetupCompare() {
           ))}
         </select>
 
-        <button
-          className="primary-action compare-new-setup"
-          onClick={() => navigate("/database")}
-        >
+        <button className="primary-action compare-new-setup" onClick={handleOpenDatabase}>
           Open Database
         </button>
       </div>
@@ -210,6 +184,7 @@ export default function SetupCompare() {
         <div className="compare-sheet">
           <div className="compare-sheet-row compare-sheet-top-row">
             <div className="compare-sticky-label">Setup</div>
+
             {[left, right].map((setup, index) => (
               <div
                 key={setup.id}
@@ -222,10 +197,7 @@ export default function SetupCompare() {
                 <div className="compare-setup-name">{setup.name}</div>
                 <div className="compare-setup-event">{setup.general.event || "Autocross"}</div>
                 <div className="compare-setup-track">{setup.general.track || "Track not set"}</div>
-                <button
-                  className="compare-setup-edit"
-                  onClick={() => handleEditSetup(setup)}
-                >
+                <button className="compare-setup-edit" onClick={() => handleEditSetup(setup)}>
                   Edit setup
                 </button>
               </div>
@@ -250,304 +222,466 @@ export default function SetupCompare() {
             ))}
           </div>
 
+          {compareSectionHead("General")}
+          {compareRow({
+            label: "Driver",
+            left: left.general.driver,
+            right: right.general.driver,
+          })}
+          {compareRow({
+            label: "Engineer",
+            left: left.general.engineer,
+            right: right.general.engineer,
+          })}
+          {compareRow({
+            label: "Track",
+            left: left.general.track,
+            right: right.general.track,
+          })}
+          {compareRow({
+            label: "Event",
+            left: left.general.event,
+            right: right.general.event,
+          })}
+          {compareRow({
+            label: "Weather",
+            left: left.general.weather,
+            right: right.general.weather,
+          })}
+
           {compareSectionHead("Weight")}
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">Corner Weights (Lbs)</div>
-            {[left, right].map((setup, index) => (
-              <div
-                key={`${setup.id}-corner-weights`}
-                className={index === 0 ? "compare-corner-cell active" : "compare-corner-cell"}
-              >
-                {cornerBlock(setup, index === 0)}
-              </div>
-            ))}
-          </div>
+          {compareQuadRow({
+            label: "Corner Weights (Lbs)",
+            left: [
+              left.suspension.lf.cornerWeight,
+              left.suspension.rf.cornerWeight,
+              left.suspension.lr.cornerWeight,
+              left.suspension.rr.cornerWeight,
+            ],
+            right: [
+              right.suspension.lf.cornerWeight,
+              right.suspension.rf.cornerWeight,
+              right.suspension.lr.cornerWeight,
+              right.suspension.rr.cornerWeight,
+            ],
+            highlightRight: true,
+          })}
+          {compareRow({
+            label: "Total Weight (Lbs)",
+            left:
+              left.suspension.lf.cornerWeight ??
+              left.suspension.rf.cornerWeight ??
+              left.suspension.lr.cornerWeight ??
+              left.suspension.rr.cornerWeight,
+            right:
+              right.suspension.lf.cornerWeight ??
+              right.suspension.rf.cornerWeight ??
+              right.suspension.lr.cornerWeight ??
+              right.suspension.rr.cornerWeight,
+            highlightRight: true,
+          })}
 
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">Total Weight (Lbs)</div>
-            {[left, right].map((setup) => (
-              <div key={`${setup.id}-total-weight`} className="compare-single-value">
-                {setup.suspension.lf.cornerWeight ??
-                  setup.suspension.rf.cornerWeight ??
-                  setup.suspension.lr.cornerWeight ??
-                  setup.suspension.rr.cornerWeight ??
-                  "--"}
-              </div>
-            ))}
-          </div>
+          {compareSectionHead("Alignment")}
+          {compareQuadRow({
+            label: "Camber (°)",
+            left: [
+              left.suspension.lf.camber,
+              left.suspension.rf.camber,
+              left.suspension.lr.camber,
+              left.suspension.rr.camber,
+            ],
+            right: [
+              right.suspension.lf.camber,
+              right.suspension.rf.camber,
+              right.suspension.lr.camber,
+              right.suspension.rr.camber,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Toe (°)",
+            left: [
+              left.suspension.lf.toe,
+              left.suspension.rf.toe,
+              left.suspension.lr.toe,
+              left.suspension.rr.toe,
+            ],
+            right: [
+              right.suspension.lf.toe,
+              right.suspension.rf.toe,
+              right.suspension.lr.toe,
+              right.suspension.rr.toe,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Ride Height (In)",
+            left: [
+              left.suspension.lf.rideHeight,
+              left.suspension.rf.rideHeight,
+              left.suspension.lr.rideHeight,
+              left.suspension.rr.rideHeight,
+            ],
+            right: [
+              right.suspension.lf.rideHeight,
+              right.suspension.rf.rideHeight,
+              right.suspension.lr.rideHeight,
+              right.suspension.rr.rideHeight,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Caster (°)",
+            left: [
+              left.suspension.lf.caster,
+              left.suspension.rf.caster,
+              left.suspension.lr.caster,
+              left.suspension.rr.caster,
+            ],
+            right: [
+              right.suspension.lf.caster,
+              right.suspension.rf.caster,
+              right.suspension.lr.caster,
+              right.suspension.rr.caster,
+            ],
+          })}
 
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">Front Weight (%)</div>
-            {[left, right].map((setup, index) => (
-              <div
-                key={`${setup.id}-front`}
-                className={index === 0 ? "compare-single-value highlight" : "compare-single-value"}
-              >
-                {setup.suspension.lf.cornerWeight ? "48.5" : "45.5"}
-              </div>
-            ))}
-          </div>
+          {compareSectionHead("Springs")}
+          {compareQuadRow({
+            label: "Spring Rate",
+            left: [
+              left.suspension.lf.springRate,
+              left.suspension.rf.springRate,
+              left.suspension.lr.springRate,
+              left.suspension.rr.springRate,
+            ],
+            right: [
+              right.suspension.lf.springRate,
+              right.suspension.rf.springRate,
+              right.suspension.lr.springRate,
+              right.suspension.rr.springRate,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Spring Preload",
+            left: [
+              left.suspension.lf.springPreload,
+              left.suspension.rf.springPreload,
+              left.suspension.lr.springPreload,
+              left.suspension.rr.springPreload,
+            ],
+            right: [
+              right.suspension.lf.springPreload,
+              right.suspension.rf.springPreload,
+              right.suspension.lr.springPreload,
+              right.suspension.rr.springPreload,
+            ],
+          })}
 
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">Left Weight (%)</div>
-            {[left, right].map((setup) => (
-              <div key={`${setup.id}-left`} className="compare-single-value">
-                {setup.suspension.lf.cornerWeight ? "50.1" : "50.0"}
-              </div>
-            ))}
-          </div>
+          {compareSectionHead("Dampers")}
+          {compareQuadRow({
+            label: "Low Speed Bump",
+            left: [
+              left.suspension.lf.lowSpeedBump,
+              left.suspension.rf.lowSpeedBump,
+              left.suspension.lr.lowSpeedBump,
+              left.suspension.rr.lowSpeedBump,
+            ],
+            right: [
+              right.suspension.lf.lowSpeedBump,
+              right.suspension.rf.lowSpeedBump,
+              right.suspension.lr.lowSpeedBump,
+              right.suspension.rr.lowSpeedBump,
+            ],
+          })}
+          {compareQuadRow({
+            label: "High Speed Bump",
+            left: [
+              left.suspension.lf.highSpeedBump,
+              left.suspension.rf.highSpeedBump,
+              left.suspension.lr.highSpeedBump,
+              left.suspension.rr.highSpeedBump,
+            ],
+            right: [
+              right.suspension.lf.highSpeedBump,
+              right.suspension.rf.highSpeedBump,
+              right.suspension.lr.highSpeedBump,
+              right.suspension.rr.highSpeedBump,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Low Speed Rebound",
+            left: [
+              left.suspension.lf.lowSpeedRebound,
+              left.suspension.rf.lowSpeedRebound,
+              left.suspension.lr.lowSpeedRebound,
+              left.suspension.rr.lowSpeedRebound,
+            ],
+            right: [
+              right.suspension.lf.lowSpeedRebound,
+              right.suspension.rf.lowSpeedRebound,
+              right.suspension.lr.lowSpeedRebound,
+              right.suspension.rr.lowSpeedRebound,
+            ],
+          })}
+          {compareQuadRow({
+            label: "High Speed Rebound",
+            left: [
+              left.suspension.lf.highSpeedRebound,
+              left.suspension.rf.highSpeedRebound,
+              left.suspension.lr.highSpeedRebound,
+              left.suspension.rr.highSpeedRebound,
+            ],
+            right: [
+              right.suspension.lf.highSpeedRebound,
+              right.suspension.rf.highSpeedRebound,
+              right.suspension.lr.highSpeedRebound,
+              right.suspension.rr.highSpeedRebound,
+            ],
+          })}
 
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">Cross Weight (%)</div>
-            {[left, right].map((setup) => (
-              <div key={`${setup.id}-cross`} className="compare-single-value">
-                {setup.suspension.lf.cornerWeight ? "49.8" : "50.0"}
-              </div>
-            ))}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">Fuel (%)</div>
-            {[left, right].map((setup) => (
-              <div key={`${setup.id}-fuel`} className="compare-single-value">
-                {setup.engine.fuelMap ? "100" : "--"}
-              </div>
-            ))}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">Measured On</div>
-            {[left, right].map((setup) => (
-              <div key={`${setup.id}-measured`} className="compare-single-value">
-                setup pad
-              </div>
-            ))}
-          </div>
-
-          {compareSectionHead("Tires & Alignment")}
-          <div className="compare-sheet-row compare-values-row compare-weight-row compare-alignment-row">
-            <div className="compare-sticky-label">Pressures (Psi)</div>
-            {[left, right].map((setup, index) =>
-              fourCornerMetric(
-                [
-                  setup.tires.lf.coldPressure,
-                  setup.tires.rf.coldPressure,
-                  setup.tires.lr.coldPressure,
-                  setup.tires.rr.coldPressure,
-                ],
-                index === 1
-              )
-            )}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row compare-alignment-row">
-            <div className="compare-sticky-label">Camber (°)</div>
-            {[left, right].map((setup, index) =>
-              fourCornerMetric(
-                [
-                  setup.suspension.lf.camber,
-                  setup.suspension.rf.camber,
-                  setup.suspension.lr.camber,
-                  setup.suspension.rr.camber,
-                ],
-                index === 1
-              )
-            )}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row compare-alignment-row">
-            <div className="compare-sticky-label">Toe (°)</div>
-            {[left, right].map((setup) =>
-              fourCornerMetric([
-                setup.suspension.lf.toe,
-                setup.suspension.rf.toe,
-                setup.suspension.lr.toe,
-                setup.suspension.rr.toe,
-              ])
-            )}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row compare-alignment-row">
-            <div className="compare-sticky-label">Ride Heights (In)</div>
-            {[left, right].map((setup) =>
-              fourCornerMetric([
-                setup.suspension.lf.rideHeight,
-                setup.suspension.rf.rideHeight,
-                setup.suspension.lr.rideHeight,
-                setup.suspension.rr.rideHeight,
-              ])
-            )}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row compare-alignment-row">
-            <div className="compare-sticky-label">Caster (°)</div>
-            {[left, right].map((setup) =>
-              fourCornerMetric([
-                setup.suspension.lf.caster,
-                setup.suspension.rf.caster,
-                setup.suspension.lr.caster,
-                setup.suspension.rr.caster,
-              ])
-            )}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">KPI (°)</div>
-            {[left, right].map(() => (
-              <div className="compare-single-value">8.7</div>
-            ))}
-          </div>
-
-          {compareSectionHead("Springs - ARB - Roll")}
-          <div className="compare-sheet-row compare-values-row compare-matrix-row">
-            <div className="compare-sticky-label">Springs (Lbs/In)</div>
-            {[left, right].map((setup) =>
-              matrixBlock([
-                setup.suspension.lf.springRate,
-                setup.suspension.rf.springRate,
-                setup.suspension.lr.springRate,
-                setup.suspension.rr.springRate,
-              ])
-            )}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-matrix-row">
-            <div className="compare-sticky-label">ARB (1-7)</div>
-            {[left, right].map((setup, index) =>
-              matrixBlock(
-                [
-                  setup.suspension.frontArb,
-                  setup.suspension.rearArb,
-                  setup.suspension.frontArb,
-                  setup.suspension.rearArb,
-                ],
-                index === 1
-              )
-            )}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">Front Roll Stiffness</div>
-            {[left, right].map((setup, index) => (
-              <div
-                key={`${setup.id}-front-roll`}
-                className={index === 1 ? "compare-single-value highlight" : "compare-single-value"}
-              >
-                stiff
-              </div>
-            ))}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">Rear Roll Stiffness</div>
-            {[left, right].map((setup, index) => (
-              <div
-                key={`${setup.id}-rear-roll`}
-                className={index === 1 ? "compare-single-value highlight" : "compare-single-value"}
-              >
-                med-soft
-              </div>
-            ))}
-          </div>
-
-          {compareSectionHead("Dampers (0-30 Clicks)")}
-          <div className="compare-sheet-row compare-values-row compare-weight-row compare-damper-row">
-            <div className="compare-sticky-label">Dampers</div>
-            {[left, right].map((setup, index) => damperBlock(setup.id, index, index === 1))}
-          </div>
+          {compareSectionHead("Brakes")}
+          {compareQuadRow({
+            label: "Rotor Temperature",
+            left: [
+              left.brakes.lf.rotorTemperature,
+              left.brakes.rf.rotorTemperature,
+              left.brakes.lr.rotorTemperature,
+              left.brakes.rr.rotorTemperature,
+            ],
+            right: [
+              right.brakes.lf.rotorTemperature,
+              right.brakes.rf.rotorTemperature,
+              right.brakes.lr.rotorTemperature,
+              right.brakes.rr.rotorTemperature,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Pad Thickness",
+            left: [
+              left.brakes.lf.padThickness,
+              left.brakes.rf.padThickness,
+              left.brakes.lr.padThickness,
+              left.brakes.rr.padThickness,
+            ],
+            right: [
+              right.brakes.lf.padThickness,
+              right.brakes.rf.padThickness,
+              right.brakes.lr.padThickness,
+              right.brakes.rr.padThickness,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Brake Pressure",
+            left: [
+              left.brakes.lf.brakePressure,
+              left.brakes.rf.brakePressure,
+              left.brakes.lr.brakePressure,
+              left.brakes.rr.brakePressure,
+            ],
+            right: [
+              right.brakes.lf.brakePressure,
+              right.brakes.rf.brakePressure,
+              right.brakes.lr.brakePressure,
+              right.brakes.rr.brakePressure,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Brake Wear",
+            left: [
+              left.brakes.lf.brakeWear,
+              left.brakes.rf.brakeWear,
+              left.brakes.lr.brakeWear,
+              left.brakes.rr.brakeWear,
+            ],
+            right: [
+              right.brakes.lf.brakeWear,
+              right.brakes.rf.brakeWear,
+              right.brakes.lr.brakeWear,
+              right.brakes.rr.brakeWear,
+            ],
+          })}
+          {compareRow({
+            label: "Front Bias",
+            left: left.brakes.frontBias,
+            right: right.brakes.frontBias,
+          })}
+          {compareRow({
+            label: "Rear Bias",
+            left: left.brakes.rearBias,
+            right: right.brakes.rearBias,
+          })}
+          {compareRow({
+            label: "Master Cylinder",
+            left: left.brakes.masterCylinder,
+            right: right.brakes.masterCylinder,
+          })}
+          {compareRow({
+            label: "Pedal Ratio",
+            left: left.brakes.pedalRatio,
+            right: right.brakes.pedalRatio,
+          })}
 
           {compareSectionHead("Tires")}
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">Compound</div>
-            {[left, right].map((setup, index) => (
-              <div
-                key={`${setup.id}-compound`}
-                className={index === 1 ? "compare-single-value highlight" : "compare-single-value"}
-              >
-                {setup.general.weather?.toUpperCase() === "WET" ? "Hoosier WET" : "Hoosier R25B"}
-              </div>
-            ))}
-          </div>
+          {compareQuadRow({
+            label: "Cold Pressure",
+            left: [
+              left.tires.lf.coldPressure,
+              left.tires.rf.coldPressure,
+              left.tires.lr.coldPressure,
+              left.tires.rr.coldPressure,
+            ],
+            right: [
+              right.tires.lf.coldPressure,
+              right.tires.rf.coldPressure,
+              right.tires.lr.coldPressure,
+              right.tires.rr.coldPressure,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Hot Pressure",
+            left: [
+              left.tires.lf.hotPressure,
+              left.tires.rf.hotPressure,
+              left.tires.lr.hotPressure,
+              left.tires.rr.hotPressure,
+            ],
+            right: [
+              right.tires.lf.hotPressure,
+              right.tires.rf.hotPressure,
+              right.tires.lr.hotPressure,
+              right.tires.rr.hotPressure,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Final Pressure",
+            left: [
+              left.tires.lf.finalPressure,
+              left.tires.rf.finalPressure,
+              left.tires.lr.finalPressure,
+              left.tires.rr.finalPressure,
+            ],
+            right: [
+              right.tires.lf.finalPressure,
+              right.tires.rf.finalPressure,
+              right.tires.lr.finalPressure,
+              right.tires.rr.finalPressure,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Inside Temp",
+            left: [
+              left.tires.lf.insideTemp,
+              left.tires.rf.insideTemp,
+              left.tires.lr.insideTemp,
+              left.tires.rr.insideTemp,
+            ],
+            right: [
+              right.tires.lf.insideTemp,
+              right.tires.rf.insideTemp,
+              right.tires.lr.insideTemp,
+              right.tires.rr.insideTemp,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Middle Temp",
+            left: [
+              left.tires.lf.middleTemp,
+              left.tires.rf.middleTemp,
+              left.tires.lr.middleTemp,
+              left.tires.rr.middleTemp,
+            ],
+            right: [
+              right.tires.lf.middleTemp,
+              right.tires.rf.middleTemp,
+              right.tires.lr.middleTemp,
+              right.tires.rr.middleTemp,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Outside Temp",
+            left: [
+              left.tires.lf.outsideTemp,
+              left.tires.rf.outsideTemp,
+              left.tires.lr.outsideTemp,
+              left.tires.rr.outsideTemp,
+            ],
+            right: [
+              right.tires.lf.outsideTemp,
+              right.tires.rf.outsideTemp,
+              right.tires.lr.outsideTemp,
+              right.tires.rr.outsideTemp,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Wear",
+            left: [
+              left.tires.lf.wear,
+              left.tires.rf.wear,
+              left.tires.lr.wear,
+              left.tires.rr.wear,
+            ],
+            right: [
+              right.tires.lf.wear,
+              right.tires.rf.wear,
+              right.tires.lr.wear,
+              right.tires.rr.wear,
+            ],
+          })}
+          {compareQuadRow({
+            label: "Heat Cycles",
+            left: [
+              left.tires.lf.heatCycles,
+              left.tires.rf.heatCycles,
+              left.tires.lr.heatCycles,
+              left.tires.rr.heatCycles,
+            ],
+            right: [
+              right.tires.lf.heatCycles,
+              right.tires.rf.heatCycles,
+              right.tires.lr.heatCycles,
+              right.tires.rr.heatCycles,
+            ],
+          })}
 
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">Condition (Wet/Dry/Comp)</div>
-            {[left, right].map((setup, index) => (
-              <div
-                key={`${setup.id}-condition`}
-                className={index === 1 ? "compare-single-value highlight" : "compare-single-value"}
-              >
-                {setup.general.weather?.toUpperCase() === "WET" ? "wet" : "dry"}
-              </div>
-            ))}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">Tire Set ID</div>
-            {[left, right].map((setup, index) => (
-              <div
-                key={`${setup.id}-tire-set`}
-                className={index === 1 ? "compare-single-value highlight" : "compare-single-value"}
-              >
-                {index === 1 ? "SET-W1" : "SET-01"}
-              </div>
-            ))}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">FL Pressure (Psi)</div>
-            {[left, right].map((setup, index) => (
-              <div
-                key={`${setup.id}-fl-pressure`}
-                className={index === 1 ? "compare-single-value highlight" : "compare-single-value"}
-              >
-                {setup.tires.lf.coldPressure ?? 11}
-              </div>
-            ))}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">FR Pressure (Psi)</div>
-            {[left, right].map((setup, index) => (
-              <div
-                key={`${setup.id}-fr-pressure`}
-                className={index === 1 ? "compare-single-value highlight" : "compare-single-value"}
-              >
-                {setup.tires.rf.coldPressure ?? 11}
-              </div>
-            ))}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">RL Pressure (Psi)</div>
-            {[left, right].map((setup, index) => (
-              <div
-                key={`${setup.id}-rl-pressure`}
-                className={index === 1 ? "compare-single-value highlight" : "compare-single-value"}
-              >
-                {setup.tires.lr.coldPressure ?? 11.5}
-              </div>
-            ))}
-          </div>
-
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">RR Pressure (Psi)</div>
-            {[left, right].map((setup, index) => (
-              <div
-                key={`${setup.id}-rr-pressure`}
-                className={index === 1 ? "compare-single-value highlight" : "compare-single-value"}
-              >
-                {setup.tires.rr.coldPressure ?? 11.5}
-              </div>
-            ))}
-          </div>
-
-          {compareSectionHead("Aero")}
-          <div className="compare-sheet-row compare-values-row compare-weight-row">
-            <div className="compare-sticky-label">Front Wing Config</div>
-            {[left, right].map(() => (
-              <div className="compare-single-value">std 3-element</div>
-            ))}
-          </div>
+          {compareSectionHead("Engine")}
+          {compareRow({
+            label: "Throttle Map",
+            left: left.engine.throttleMap,
+            right: right.engine.throttleMap,
+          })}
+          {compareRow({
+            label: "Fuel Map",
+            left: left.engine.fuelMap,
+            right: right.engine.fuelMap,
+          })}
+          {compareRow({
+            label: "Rev Limit",
+            left: left.engine.revLimit,
+            right: right.engine.revLimit,
+          })}
+          {compareRow({
+            label: "Engine Brake",
+            left: left.engine.engineBrake,
+            right: right.engine.engineBrake,
+          })}
+          {compareRow({
+            label: "Launch Control",
+            left: boolText(left.engine.launchControl),
+            right: boolText(right.engine.launchControl),
+          })}
+          {compareRow({
+            label: "Traction Control",
+            left: boolText(left.engine.tractionControl),
+            right: boolText(right.engine.tractionControl),
+          })}
+          {compareRow({
+            label: "Shift Light",
+            left: left.engine.shiftLight,
+            right: right.engine.shiftLight,
+          })}
+          {compareRow({
+            label: "Pit Limiter",
+            left: boolText(left.engine.pitLimiter),
+            right: boolText(right.engine.pitLimiter),
+          })}
         </div>
       )}
     </div>
