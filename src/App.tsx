@@ -24,6 +24,8 @@ export default function App() {
               <Route path="/new-session" element={<NewSession />} />
               <Route path="/database" element={<SetupDatabase />} />
               <Route path="/runs" element={<Runs />} />
+              <Route path="/endurance" element={<Runs />} />
+              <Route path="/sportscarsetup" element={<Runs />} />
               <Route path="/dashboard" element={<PerformanceDashboard />} />
               <Route path="/performance" element={<Navigate to="/dashboard" replace />} />
               <Route path="/compare" element={<SetupCompare />} />
