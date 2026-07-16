@@ -59,7 +59,7 @@ export default function PerformanceDashboard() {
   return (
     <div className="performance-dashboard-shell">
 
-      <TopNav />
+      <AppHeader />
 
       <div className="compare-header performance-dashboard-header">
         <div>
