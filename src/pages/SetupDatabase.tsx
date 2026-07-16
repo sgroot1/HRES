@@ -316,7 +316,7 @@ export default function SetupDatabase() {
                   setup={setup}
                   onOpen={() => {
                     openSetup(setup.id);
-                    navigate("/editor", { state: { from: "/database" } });
+                    navigate("/editor", { state: { returnTo: "/database" } });
                   }}
                   onDuplicate={() => duplicateSetup(setup.id)}
                   onDelete={() => deleteSetup(setup.id)}
