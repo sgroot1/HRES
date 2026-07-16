@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import TopNav from "../components/layout/TopNav";
 import { getExampleSetups } from "../data/exampleSetups";
 import { useSetupStore } from "../store/setupStore";
 import { Setup } from "../types/setup";
