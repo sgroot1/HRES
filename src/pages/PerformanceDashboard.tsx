@@ -58,9 +58,6 @@ export default function PerformanceDashboard() {
 
   return (
     <div className="performance-dashboard-shell">
-
-      <AppHeader />
-
       <div className="compare-header performance-dashboard-header">
         <div>
           <div className="compare-kicker">Performance Sheet</div>
