@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+import { getExampleSetups } from "../data/exampleSetups";
 import { Setup, SetupStatus } from "../types/setup";
 import { useActivityStore } from "./activityStore";
 
@@ -45,6 +46,7 @@ interface SetupStore {
   setups: Setup[];
   currentSetup: Setup | null;
 
+  loadExampleSetups(): void;
   createSetup(name: string): Setup;
   openSetup(id: string): void;
   duplicateSetup(id: string): void;
@@ -70,6 +72,26 @@ export const useSetupStore = create<SetupStore>((set, get) => {
   return {
     setups: [],
     currentSetup: null,
+
+    loadExampleSetups() {
+      if (get().setups.length > 0) {
+        return;
+      }
+
+      const examples = getExampleSetups();
+
+      set({
+        setups: examples,
+        currentSetup: examples[0] ?? null,
+      });
+
+      useActivityStore.getState().addActivity({
+        type: "setup",
+        title: "Example Setups Loaded",
+        description: `${examples.length} setups`,
+        severity: "info",
+      });
+    },
 
     createSetup(name) {
       const isBaseline = /baseline/i.test(name);
