@@ -22,8 +22,6 @@ export default function Workspace() {
 
   return (
     <div className="workspace-shell">
-      <AppHeader />
-
       <div className="workspace-actions-bar">
         <button className="secondary-action workspace-new-session" onClick={() => navigate("/new-session")}>
           New Session
