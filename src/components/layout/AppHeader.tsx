@@ -4,7 +4,7 @@ import { useRunStore } from "../../store/runStore";
 import { useSessionStore } from "../../store/sessionStore";
 import { useSetupStore } from "../../store/setupStore";
 
-const items = [
+const navigation = [
   { label: "Mission Control", path: "/" },
   { label: "Workspace", path: "/workspace" },
   { label: "Run Review", path: "/runs" },
@@ -64,10 +64,11 @@ export default function AppHeader() {
 
       <nav className="topnav-nav">
 
-        {items.map((item) => (
+        {navigation.map((item) => (
 
           <button
             key={item.path}
+            type="button"
             onClick={() => navigate(item.path)}
             className={
               location.pathname === item.path
