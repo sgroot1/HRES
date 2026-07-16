@@ -1,0 +1,88 @@
+/* ==========================================================
+   FORMS
+========================================================== */
+
+.field{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:4px;
+
+    margin-top:6px;
+
+}
+
+.field label{
+
+    font-size:var(--font-xs);
+
+    color:var(--text-secondary);
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+}
+
+input,
+select,
+textarea{
+
+    width:100%;
+
+    background:var(--panel-light);
+
+    border:1px solid var(--border);
+
+    color:var(--text);
+
+    padding:9px 11px;
+
+    border-radius:var(--radius-sm);
+
+    font-size:var(--font-md);
+
+    line-height:1.4;
+
+    transition:var(--transition);
+
+}
+
+textarea{
+
+    resize:vertical;
+
+    min-height:90px;
+
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+
+    outline:none;
+
+    border-color:var(--gold);
+
+    box-shadow:0 0 0 3px var(--gold-soft);
+
+}
+
+input[readonly]{
+
+    color:var(--text-secondary);
+
+    background:transparent;
+
+}
+
+input::placeholder,
+textarea::placeholder{
+
+    color:var(--text-secondary);
+
+    opacity:.7;
+
+}

@@ -1,0 +1,276 @@
+/* ==========================================================
+   SETUP EXPLORER
+========================================================== */
+.setup-details{
+
+    margin-top:12px;
+
+    display:grid;
+
+    gap:8px;
+
+}
+
+.setup-details div{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.setup-details span{
+
+    color:var(--text-secondary);
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+}
+
+.setup-details strong{
+
+    font-size:13px;
+
+    color:var(--text);
+
+}
+.setup-explorer{
+
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:var(--panel-shadow);
+
+}
+
+.setup-header{
+
+    padding:11px 12px 10px;
+    border-bottom:1px solid var(--border);
+    background:rgba(255,255,255,0.03);
+
+}
+
+.setup-header h2{
+
+    margin:0 0 8px;
+
+    color:var(--text);
+
+    font-size:10px;
+
+    font-weight:700;
+
+    letter-spacing:.2em;
+
+    text-transform:uppercase;
+
+}
+
+.setup-search{
+
+    width:100%;
+
+    background:var(--panel-light);
+
+    border:1px solid var(--border);
+
+    padding:8px 10px;
+
+    font-size:13px;
+
+    color:var(--text);
+
+    border-radius:999px;
+
+}
+
+.setup-items{
+
+    overflow:auto;
+
+    display:flex;
+
+    flex-direction:column;
+    gap:7px;
+    padding:9px;
+
+}
+
+.setup-card{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+    background:rgba(255,255,255,0.025);
+
+    border:1px solid transparent;
+
+    border-radius:12px;
+
+    padding:10px 12px;
+
+    transition:var(--transition);
+    box-shadow:var(--panel-shadow);
+
+}
+
+.setup-card:hover{
+
+    background:var(--panel-hover);
+    border-color:var(--border-light);
+
+}
+
+.setup-card.active{
+
+    border-color:var(--gold);
+    background:rgba(255,198,39,.12);
+
+}
+
+.setup-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.setup-name{
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
+
+.setup-version{
+
+    color:var(--text-secondary);
+
+    font-size:11px;
+
+}
+
+.setup-bottom{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    color:var(--text-secondary);
+
+    font-size:11px;
+
+}
+
+.setup-status{
+
+    color:var(--gold);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    font-size:10px;
+
+}
+
+/* ==========================================================
+   STATUS BADGE (setup lifecycle: baseline / development /
+   approved / competition / archived)
+========================================================== */
+
+.status{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    padding:3px 10px;
+
+    border-radius:999px;
+
+    font-size:var(--font-xs);
+
+    font-weight:600;
+
+    text-transform:uppercase;
+
+    letter-spacing:.06em;
+
+    line-height:1.6;
+
+    white-space:nowrap;
+
+}
+
+.status::before{
+
+    content:"";
+
+    width:7px;
+
+    height:7px;
+
+    border-radius:50%;
+
+    background:currentColor;
+
+    flex-shrink:0;
+
+}
+
+.status.baseline{
+
+    color:var(--text-secondary);
+
+    background:rgba(166,173,184,.14);
+
+}
+
+.status.development{
+
+    color:var(--info);
+
+    background:var(--info-soft);
+
+}
+
+.status.approved{
+
+    color:var(--success);
+
+    background:var(--success-soft);
+
+}
+
+.status.competition{
+
+    color:var(--gold);
+
+    background:var(--gold-soft);
+
+}
+
+.status.archived{
+
+    color:var(--danger);
+
+    background:var(--danger-soft);
+}

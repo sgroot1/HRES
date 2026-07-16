@@ -1,0 +1,210 @@
+/* ==========================================
+   UI CARD (shared panel wrapper)
+========================================== */
+
+.ui-card{
+
+    background:var(--panel);
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius);
+
+    padding:var(--space-5);
+    box-shadow:var(--panel-shadow);
+
+}
+
+.ui-card-title{
+
+    margin:0 0 var(--space-4);
+
+    color:var(--text-secondary);
+
+    font-size:var(--font-xs);
+
+    font-weight:600;
+
+    letter-spacing:.12em;
+
+    text-transform:uppercase;
+
+}
+
+/* ==========================================
+   DASHBOARD
+========================================== */
+
+.dashboard{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:20px;
+
+}
+
+.dashboard-shell{
+
+    max-width:1400px;
+    margin:0 auto;
+    padding:20px 0 40px;
+
+}
+
+.dashboard-grid{
+
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:20px;
+
+}
+
+@media (max-width: 1100px){
+
+    .dashboard-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+.dashboard-panel{
+
+    background:var(--panel);
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius);
+
+    padding:20px;
+    box-shadow:var(--panel-shadow);
+
+}
+
+.dashboard-panel h2{
+
+    margin:0 0 20px;
+
+    color:var(--text-secondary);
+
+    font-size:12px;
+
+    letter-spacing:.18em;
+
+    text-transform:uppercase;
+
+}
+
+.dashboard-kpi{
+
+    margin-bottom:20px;
+
+}
+
+.dashboard-kpi label{
+
+    display:block;
+
+    color:var(--text-secondary);
+
+    font-size:12px;
+
+    margin-bottom:8px;
+
+}
+
+.dashboard-kpi strong{
+
+    font-size:34px;
+
+    color:var(--text);
+
+}
+
+.dashboard-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:8px 0;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.dashboard-text{
+
+    color:var(--text-secondary);
+
+    line-height:1.6;
+
+}
+/* ==========================================================
+   TABLES
+========================================================== */
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+th{
+
+    background:#1B1C20;
+
+    color:var(--text-secondary);
+
+    font-size:var(--font-sm);
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+    font-weight:600;
+
+    padding:11px 12px;
+
+    border-bottom:1px solid var(--border);
+
+    text-align:left;
+
+}
+
+td{
+
+    padding:11px 12px;
+
+    border-bottom:1px solid var(--border);
+
+    font-size:var(--font-md);
+
+    line-height:1.4;
+
+}
+
+tbody tr{
+
+    transition:var(--transition);
+
+}
+
+tr:hover{
+
+    background:#1B1C20;
+
+}
+
+.analysis-table td:first-child{
+
+    font-weight:600;
+
+    color:var(--text);
+
+}

@@ -1,0 +1,1060 @@
+/* ==========================================
+   SETUP CHANGES
+========================================== */
+
+.change-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 0;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.change-row:last-child{
+
+    border-bottom:none;
+
+}
+
+.change-row small{
+
+    display:block;
+
+    margin-top:4px;
+
+    color:var(--text-secondary);
+
+    font-size:12px;
+
+}
+
+.change-values{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    font-family:var(--font-family);
+
+}
+
+.change-values span{
+
+    color:var(--text-secondary);
+
+}
+
+.change-values strong{
+
+    color:var(--gold);
+
+}
+/* ==========================================
+   RUN SUMMARY
+========================================== */
+
+.summary-grid{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+
+    margin:16px 0;
+
+}
+
+.summary-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.summary-row span{
+
+    color:var(--text-secondary);
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.08em;
+
+}
+
+.summary-row strong{
+
+    color:var(--text);
+
+    font-size:14px;
+
+}
+
+.summary-notes{
+
+    margin-top:10px;
+
+    margin-bottom:20px;
+
+    padding:12px;
+
+    background:#101114;
+
+    border:1px solid var(--border);
+
+    line-height:1.6;
+
+    min-height:70px;
+
+}
+
+.general-column hr{
+
+    border:none;
+
+    border-top:1px solid var(--border);
+
+    margin:20px 0;
+
+}
+
+.general-column h3{
+
+    margin:0;
+
+    color:var(--text-secondary);
+
+    font-size:12px;
+
+    letter-spacing:.15em;
+
+    text-transform:uppercase;
+
+}
+
+/* ==========================================================
+   EDITOR SIDEBAR
+========================================================== */
+
+.editor-sidebar{
+
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    padding:10px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+    box-shadow:var(--panel-shadow);
+
+}
+
+.editor-sidebar button{
+
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    width:100%;
+    min-height:38px;
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:rgba(255,255,255,0.03);
+    color:var(--text-secondary);
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    transition:var(--transition);
+
+}
+
+.editor-sidebar button:hover{
+
+    background:var(--panel-hover);
+    color:var(--text);
+
+}
+
+.editor-sidebar button.sidebar-active{
+
+    color:var(--gold);
+    border-color:rgba(255,198,39,0.26);
+    background:rgba(255,198,39,0.12);
+
+}
+/* ==========================================================
+   ENGINEERING PANELS
+========================================================== */
+
+.general-grid{
+
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:8px;
+    align-items:start;
+    padding-top:2px;
+
+}
+
+.module-sheet{
+
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+
+}
+
+.module-sheet .compare-kicker{
+
+    margin-bottom:2px;
+    letter-spacing:.24em;
+
+}
+
+.module-sheet-grid{
+
+    gap:10px;
+
+}
+
+.module-sheet-grid .field{
+
+    margin-top:6px;
+    gap:4px;
+
+}
+
+.module-sheet-grid .field label{
+
+    color:var(--text-secondary);
+    font-size:10px;
+    letter-spacing:.1em;
+
+}
+
+.module-sheet-grid input,
+.module-sheet-grid select,
+.module-sheet-grid textarea{
+
+    background:var(--panel-light);
+    border-color:var(--border);
+    border-radius:10px;
+    color:var(--text);
+    padding:9px 11px;
+    font-size:13px;
+
+}
+
+.module-sheet-grid textarea{
+
+    min-height:120px;
+
+}
+
+.module-sheet-grid input:focus,
+.module-sheet-grid select:focus,
+.module-sheet-grid textarea:focus{
+
+    border-color:var(--gold);
+    box-shadow:0 0 0 2px var(--gold-soft);
+
+}
+
+.general-grid-split{
+
+    grid-template-columns:minmax(0,1.55fr) minmax(360px,1fr);
+
+}
+
+.general-side-stack{
+
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    align-self:start;
+
+}
+
+.general-column{
+
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+    border:1px solid var(--border);
+    border-radius:14px;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    box-shadow:var(--panel-shadow);
+
+}
+
+.general-side-stack > .general-column{
+
+    height:auto;
+
+}
+
+.general-column h2{
+
+    margin:0;
+    padding:9px 11px;
+    border-bottom:1px solid var(--border);
+    color:var(--text);
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    background:rgba(255,255,255,0.025);
+
+}
+
+.general-column>*:not(h2){
+
+    padding-left:11px;
+    padding-right:11px;
+
+}
+
+.general-column .field{
+
+    padding-top:6px;
+    padding-bottom:0;
+
+}
+
+.general-column .field:last-child{
+
+    margin-bottom:10px;
+
+}
+
+.motec-channels-list{
+
+    min-height:84px;
+    line-height:1.45;
+    resize:vertical;
+
+}
+
+.motec-analysis-panel{
+
+    grid-column:1 / -1;
+
+}
+
+.motec-analysis-content{
+
+    padding-top:8px;
+    padding-bottom:10px;
+
+}
+
+.motec-best-lap-block{
+
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    padding:14px 11px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-bottom:10px;
+
+}
+
+.motec-best-lap-block span{
+
+    color:var(--text-secondary);
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+
+}
+
+.motec-best-lap-block strong{
+
+    color:var(--text);
+    font-size:34px;
+    line-height:1;
+    font-weight:700;
+
+}
+
+.motec-section{
+
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    padding:10px 11px;
+    margin-bottom:10px;
+
+}
+
+.motec-section-title{
+
+    color:var(--text-secondary);
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    margin-bottom:8px;
+
+}
+
+.motec-kpi-grid{
+
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:8px;
+    margin-bottom:10px;
+
+}
+
+.motec-kpi-card{
+
+    background:var(--panel-light);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px 11px;
+    min-height:66px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+
+}
+
+.motec-kpi-card span{
+
+    color:var(--text-secondary);
+    font-size:10px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+
+}
+
+.motec-kpi-card strong{
+
+    color:var(--text);
+    font-size:16px;
+    font-weight:700;
+
+}
+
+.motec-kpi-card.motec-kpi-wide{
+
+    grid-column:span 2;
+
+}
+
+.motec-chart-grid{
+
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    margin-bottom:8px;
+
+}
+
+.motec-chart-grid.hist-grid .motec-chart-card{
+
+    min-height:220px;
+
+}
+
+.motec-chart-card{
+
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px 11px;
+    background:var(--panel-light);
+
+}
+
+.motec-chart-card header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+
+}
+
+.motec-chart-card h3{
+
+    margin:0;
+    color:var(--text);
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+
+}
+
+.motec-chart-card span{
+
+    color:var(--text-secondary);
+    font-size:10px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+
+}
+
+.motec-chart-svg{
+
+    width:100%;
+    height:82px;
+    display:block;
+
+}
+
+.motec-track-svg{
+
+    width:100%;
+    height:180px;
+    display:block;
+
+}
+
+.motec-chart-empty{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:82px;
+    border:1px dashed var(--border);
+    border-radius:8px;
+    color:var(--text-secondary);
+    font-size:12px;
+
+}
+
+@media (max-width: 1300px){
+
+    .motec-kpi-grid{
+
+        grid-template-columns:repeat(4,minmax(0,1fr));
+
+    }
+
+}
+
+@media (max-width: 900px){
+
+    .motec-kpi-grid{
+
+        grid-template-columns:repeat(2,minmax(0,1fr));
+
+    }
+
+    .motec-kpi-card.motec-kpi-wide{
+
+        grid-column:span 2;
+
+    }
+
+    .motec-chart-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .motec-best-lap-block strong{
+
+        font-size:28px;
+
+    }
+
+}
+
+.general-column.compact-stack .field{
+
+    padding-top:5px;
+
+}
+
+.general-info-grid{
+
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:7px;
+    padding:8px 11px 10px;
+
+}
+
+.general-info-grid .field{
+
+    margin-top:0;
+
+}
+
+.general-info-grid .wide-field{
+
+    grid-column:1 / -1;
+
+}
+
+@media (max-width: 1300px){
+
+    .general-info-grid{
+
+        grid-template-columns:repeat(2,minmax(0,1fr));
+
+    }
+
+}
+
+@media (max-width: 900px){
+
+    .general-info-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+.weather-summary{
+
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+    padding:8px 11px 0;
+
+}
+
+.weather-meta-grid{
+
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+    padding:8px 11px 10px;
+
+}
+
+.weather-meta-grid .field{
+
+    margin-top:0;
+
+}
+
+.weather-track-temp{
+
+    grid-column:1 / -1;
+
+}
+
+@media (max-width: 1200px){
+
+    .general-grid-split{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+.weather-pill{
+
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    padding:7px 9px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:rgba(255,255,255,0.025);
+
+}
+
+.weather-pill span{
+
+    color:var(--text-secondary);
+    font-size:10px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+
+}
+
+.weather-pill strong{
+
+    color:var(--text);
+    font-size:13px;
+
+}
+
+.suspension-sheet .corner-panel{
+
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:var(--panel-shadow);
+
+}
+
+.suspension-sheet .corner-panel h2{
+
+    margin:0;
+    padding:12px 14px;
+    border-bottom:1px solid var(--border);
+    color:var(--text);
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    background:rgba(255,255,255,0.025);
+
+}
+
+.suspension-sheet .corner-grid{
+
+    display:grid;
+    grid-template-columns:minmax(180px,1.3fr) repeat(4,minmax(0,1fr));
+    gap:6px;
+    padding:10px 12px 12px;
+    align-items:center;
+
+}
+
+.suspension-sheet .corner-grid strong{
+
+    color:var(--text-secondary);
+    font-size:10px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    text-align:center;
+
+}
+
+.suspension-sheet .corner-row-label{
+
+    color:var(--text-secondary);
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+
+}
+
+.suspension-sheet .corner-unit{
+
+    display:inline-block;
+    margin-left:6px;
+    color:var(--gold);
+    font-size:10px;
+    letter-spacing:.08em;
+
+}
+
+.suspension-sheet .corner-input{
+
+    width:100%;
+    background:var(--panel-light);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:8px 10px;
+    border-radius:10px;
+    font-size:13px;
+    line-height:1.2;
+
+}
+
+.corner-input:focus{
+
+    outline:none;
+    border-color:var(--gold);
+    box-shadow:0 0 0 2px var(--gold-soft);
+
+}
+
+/* ==========================================================
+   SUSPENSION SHEET
+========================================================== */
+
+.suspension-sheet{
+
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+
+}
+
+.suspension-header{
+
+    align-items:flex-end;
+    padding:4px 0 10px;
+
+}
+
+.suspension-header .compare-kicker{
+
+    margin-bottom:2px;
+    font-size:11px;
+    letter-spacing:.26em;
+
+}
+
+.suspension-header h1{
+
+    font-size:40px;
+    line-height:1.04;
+
+}
+
+.suspension-meta{
+
+    gap:8px;
+
+}
+
+.suspension-meta span{
+
+    padding:6px 10px;
+    font-size:10px;
+    letter-spacing:.14em;
+    border-color:#273144;
+    background:#131821;
+    color:#95a2b8;
+
+}
+
+.suspension-layout{
+
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 292px;
+    gap:10px;
+    align-items:start;
+
+}
+
+.suspension-main-grid{
+
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+
+}
+
+.suspension-side-grid{
+
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+
+}
+
+.suspension-arb-panel .suspension-mini-grid{
+
+    padding:12px 14px 14px;
+    gap:10px 12px;
+
+}
+
+.suspension-mini-grid{
+
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:8px 10px;
+    padding:10px 12px 12px;
+
+}
+
+.suspension-tire-grid{
+
+    grid-template-columns:1fr;
+    gap:8px;
+
+}
+
+.suspension-tire-select{
+
+    width:100%;
+    min-height:40px;
+    padding:9px 10px;
+    border:1px solid #273245;
+    border-radius:10px;
+    background:#141b29;
+    color:#f4f7ff;
+    font-size:12px;
+
+}
+
+
+.suspension-tire-psi-grid{
+
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+
+}
+
+.suspension-tire-psi-grid label{
+
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+
+}
+
+.suspension-tire-psi-grid span{
+
+    color:var(--text-secondary);
+    font-size:10px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+
+}
+
+.suspension-tire-psi-grid input{
+
+    width:100%;
+    min-height:36px;
+    padding:8px 9px;
+    border:1px solid #273245;
+    border-radius:10px;
+    background:#141b29;
+    color:#f4f7ff;
+    font-size:12px;
+
+    -moz-appearance:textfield;
+
+}
+
+.suspension-tire-psi-grid input::-webkit-outer-spin-button,
+.suspension-tire-psi-grid input::-webkit-inner-spin-button{
+
+    -webkit-appearance:none;
+    margin:0;
+
+}
+
+.suspension-tire-psi-grid input:focus{
+
+    outline:none;
+    border-color:#3b4c66;
+    box-shadow:0 0 0 2px rgba(255,198,39,0.16);
+
+}
+
+.suspension-tire-psi-grid input::placeholder{
+
+    color:#8a98b1;
+
+}
+
+.suspension-mini-label{
+
+    color:var(--text-secondary);
+    font-size:10px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+
+}
+
+.suspension-mini-value{
+
+    color:#f2f6ff;
+    font-size:24px;
+    font-weight:800;
+    line-height:1;
+
+}
+
+.corner-panel{
+
+    border-radius:16px;
+    border-color:#242f42;
+    background:linear-gradient(180deg, rgba(10,14,22,0.94), rgba(10,14,22,0.9));
+    box-shadow:0 12px 24px rgba(0,0,0,0.22);
+
+}
+
+.corner-panel h2{
+
+    padding:10px 14px;
+    border-bottom:1px solid #202a3b;
+    background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    color:#f3f7ff;
+    font-size:19px;
+    letter-spacing:.16em;
+
+}
+
+.corner-grid{
+
+    grid-template-columns:minmax(170px,1.15fr) repeat(4,minmax(0,1fr));
+    gap:6px;
+    padding:12px 12px 12px;
+
+}
+
+.corner-grid strong{
+
+    font-size:15px;
+    letter-spacing:.14em;
+    color:#8f9cb3;
+
+}
+
+.corner-row-label{
+
+    font-size:13px;
+    letter-spacing:.13em;
+    color:#9aa8c0;
+
+}
+
+.corner-unit{
+
+    margin-left:7px;
+    color:var(--gold);
+    font-size:12px;
+    letter-spacing:.12em;
+
+}
+
+.corner-input{
+
+    min-height:41px;
+    padding:10px 12px;
+    border-radius:12px;
+    border-color:#273245;
+    background:#141b29;
+    color:#f4f7ff;
+    font-size:27px;
+    font-weight:700;
+
+    -moz-appearance:textfield;
+
+}
+
+.suspension-sheet .corner-input::-webkit-outer-spin-button,
+.suspension-sheet .corner-input::-webkit-inner-spin-button{
+
+    -webkit-appearance:none;
+    margin:0;
+
+}
+
+.suspension-sheet .corner-input:focus{
+
+    border-color:#3b4c66;
+    box-shadow:0 0 0 2px rgba(255,198,39,0.16);
+
+}
+
+@media (max-width: 1200px){
+
+    .suspension-layout{
+
+        grid-template-columns:1fr;
+
+    }
+
+}

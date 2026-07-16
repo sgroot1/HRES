@@ -1,0 +1,242 @@
+/* ==========================================================
+   WORKSPACE
+========================================================== */
+.workspace-summary{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,minmax(0,1fr));
+
+    gap:10px;
+
+    align-items:start;
+
+}
+
+.workspace-summary label{
+
+    display:block;
+
+    color:var(--text-secondary);
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.12em;
+
+    margin-bottom:4px;
+
+}
+
+.workspace-summary strong{
+
+    color:var(--text);
+
+    font-size:14px;
+
+}
+.workspace{
+
+    display:grid;
+
+    grid-template-columns:280px minmax(0,1fr) 320px;
+
+    flex:1;
+
+    overflow:hidden;
+    gap:10px;
+
+}
+
+.workspace-actions-bar{
+
+    display:flex;
+    justify-content:flex-end;
+    margin:0 0 8px;
+
+}
+
+.workspace-new-session{
+
+    min-height:34px;
+    padding:7px 12px;
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+
+}
+
+/* ==========================================================
+   LEFT PANEL
+========================================================== */
+
+.workspace-left{
+
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:auto;
+    padding:10px;
+    box-shadow:var(--panel-shadow);
+
+}
+
+/* ==========================================================
+   CENTER
+========================================================== */
+
+.workspace-center{
+
+    display:flex;
+
+    flex-direction:column;
+
+    overflow:hidden;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--panel-shadow);
+
+}
+
+.workspace-page{
+
+    flex:1;
+    min-height:0;
+    overflow:visible;
+    padding:12px 12px 12px;
+
+}
+
+/* ==========================================================
+   RIGHT PANEL
+========================================================== */
+
+.workspace-right{
+
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:auto;
+    padding:10px;
+    box-shadow:var(--panel-shadow);
+
+}
+
+/* ==========================================================
+   ONBOARDING
+========================================================== */
+
+.workspace-onboarding{
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:100%;
+    padding:16px;
+
+}
+
+.workspace-onboarding-card{
+
+    max-width:680px;
+    width:100%;
+    padding:20px;
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:var(--panel);
+    box-shadow:var(--panel-shadow);
+
+}
+
+.workspace-onboarding-card h2{
+
+    margin:8px 0 10px;
+    font-size:28px;
+    color:var(--text);
+
+}
+
+.workspace-onboarding-card p{
+
+    color:var(--text-secondary);
+    line-height:1.7;
+    margin:0;
+
+}
+
+/* ==========================================================
+   RIBBON
+========================================================== */
+
+.engineering-ribbon{
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 10px;
+    border-bottom:1px solid var(--border);
+    background:transparent;
+    overflow:auto;
+    flex-wrap:wrap;
+
+}
+
+.ribbon-group{
+
+    display:flex;
+    align-items:center;
+    min-width:0;
+
+}
+
+.ribbon-label{
+
+    display:none;
+
+}
+
+.ribbon-stack{
+
+    display:flex;
+
+    flex-direction:row;
+
+    flex-wrap:nowrap;
+
+    gap:6px;
+
+}
+
+.ribbon-button{
+
+    background:rgba(255,255,255,0.03);
+    color:var(--text-secondary);
+    border:1px solid transparent;
+    border-radius:999px;
+    padding:7px 11px;
+    text-align:center;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    transition:var(--transition);
+
+}
+
+.ribbon-button:hover{
+
+    background:var(--panel-hover);
+    border-color:var(--border-light);
+    color:var(--text);
+
+}
+
+.ribbon-button.active{
+
+    border-color:rgba(255,198,39,0.24);
+    color:var(--gold);
+    background:rgba(255,198,39,.12);
+
+}

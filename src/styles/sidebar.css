@@ -1,0 +1,149 @@
+/* ==========================================================
+   ENGINEERING SIDEBAR
+========================================================== */
+
+.engineering-sidebar{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.sidebar-section{
+
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:11px 12px 12px;
+    box-shadow:var(--panel-shadow);
+
+}
+
+.sidebar-section h2{
+
+    margin:0 0 10px;
+
+    color:var(--text-secondary);
+
+    font-size:10px;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    letter-spacing:.16em;
+
+}
+
+/* Label / value rows, e.g. "Driver — Josh M." */
+
+.info-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr auto;
+
+    row-gap:6px;
+
+    column-gap:10px;
+
+    font-size:11px;
+
+}
+
+.info-grid span{
+
+    color:var(--text-secondary);
+
+    text-transform:uppercase;
+
+    letter-spacing:.06em;
+
+}
+
+.info-grid strong{
+
+    color:var(--text);
+
+    font-weight:600;
+
+}
+
+/* Big single-number KPI callouts */
+
+.kpi-card{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:4px;
+
+    background:rgba(255,255,255,0.025);
+
+    border:1px solid var(--border);
+
+    border-radius:12px;
+
+    padding:10px 12px;
+
+    margin-bottom:9px;
+}
+
+.kpi-card:last-child{
+
+    margin-bottom:0;
+
+}
+
+.kpi-card label{
+
+    display:block;
+
+    color:var(--text-secondary);
+
+    font-size:9px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.18em;
+
+    margin-bottom:5px;
+
+}
+
+.kpi-card strong{
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:var(--text);
+
+}
+
+/* Freeform advice / recommendation callouts */
+
+.recommendation-card{
+
+    background:rgba(255,255,255,0.025);
+
+    border:1px dashed var(--border-light);
+
+    border-radius:12px;
+
+    color:var(--text-secondary);
+
+    padding:10px 12px;
+
+    line-height:1.5;
+
+    font-size:12px;
+
+    min-height:84px;
+    box-shadow:var(--panel-shadow);
+
+}
