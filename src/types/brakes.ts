@@ -16,6 +16,8 @@ export interface BrakeSetup {
 
   masterCylinder: string;
 
+  abs: number | null;
+
   pedalRatio: number | null;
 
   notes: string;
