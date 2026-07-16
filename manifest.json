@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "id": "vehicle-dynamics.setup-manager",
+  "name": "Setup Manager",
+  "version": "0.1.0",
+  "description": "Race engineering setup sheets and session manager.",
+  "subteam": "vehicle-dynamics",
+  "entry": "dist/index.html",
+  "sdk": "^1.0.0",
+  "permissions": []
+}
