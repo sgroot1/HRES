@@ -1,6 +1,12 @@
-import CurrentSessionCard from "../components/home/CurrentSessionCard";
-import EngineeringHealth from "../components/home/EngineeringHealth";
-import CurrentActivityCard from "../components/home/CurrentActivityCard";
+<div className="mission-dashboard">
+
+  <CurrentSessionCard />
+
+  <EngineeringHealth />
+
+  <CurrentActivityCard />
+
+</div>
 import ModuleCard from "../components/home/ModuleCard";
 
 import { useNavigate } from "react-router-dom";
