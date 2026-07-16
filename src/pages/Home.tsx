@@ -53,7 +53,7 @@ export default function Home() {
         <ToolCard
           title="Performance"
           description="Driver feedback and MoTeC-linked run analysis."
-          onClick={() => navigate("/performance")}
+          onClick={() => navigate("/dashboard")}
         />
 
         <ToolCard
