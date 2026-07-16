@@ -31,7 +31,7 @@ export default function NewSession() {
 
   return (
     <div className="app">
-      <TopNav />
+      <AppHeader />
 
       <div className="new-session-shell">
         <section className="new-session-card">
