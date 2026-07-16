@@ -109,31 +109,42 @@ export default function EngineeringHealth() {
 
       </div>
 
-      {checks.map(check => (
+      {checks.map((check) => (
 
-        <div
-          key={check.label}
-          className="health-row"
-        >
+  <div
+    key={check.label}
+    className="health-row"
+  >
 
-          <div
-            className={
-              check.ok
-                ? "health-dot success"
-                : "health-dot warning"
-            }
-          />
+    <div
+      className={
+        check.ok
+          ? "health-dot success"
+          : "health-dot warning"
+      }
+    />
 
-          <span>
+    <div className="health-text">
 
-            {check.label}
+      <strong>
 
-          </span>
+        {check.label}
 
-        </div>
+      </strong>
 
-      ))}
+      <small>
 
+        {check.ok
+          ? "Ready"
+          : "Missing"}
+
+      </small>
+
+    </div>
+
+  </div>
+
+))}
     </section>
 
   );
