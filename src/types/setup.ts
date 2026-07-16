@@ -1,53 +1,104 @@
-import { GeneralSetup } from "./general";
-import { SuspensionSetup } from "./suspension";
-import { BrakeSetup } from "./brakes";
-import { TireSetup } from "./tires";
-import { EngineSetup } from "./engine";
-import { DaqSetup } from "./daq";
-import { DrivetrainSetup } from "./drivetrain";
-import { AeroSetup } from "./aero";
-import { PerformanceSetup } from "./performance";
+import { Setup } from "../../types/setup";
 
-export enum SetupStatus {
-  Baseline = "Baseline",
-  Development = "Development",
-  Approved = "Approved",
-  Competition = "Competition",
-  Archived = "Archived",
+interface Props {
+  setup: Setup;
+  onOpen(): void;
+  onDuplicate(): void;
+  onDelete(): void;
 }
 
-export interface Setup {
+export default function SetupRow({
+  setup,
+  onOpen,
+  onDuplicate,
+  onDelete,
+}: Props) {
 
-  id: string;
+  const updatedDate = new Date(
+    setup.updatedAt
+  ).toLocaleDateString();
 
-  name: string;
+  const weather =
+    setup.general.weather || "Not Specified";
 
-  version: number;
+  const track =
+    setup.general.track || "Track not set";
 
-  status: SetupStatus;
+  return (
 
-  createdAt: string;
+    <div className="setup-card-row">
 
-  updatedAt: string;
+      <div className="setup-card-head">
 
-  parentId?: string;
+        <span className="setup-card-version">
 
-  general: GeneralSetup;
+          V{setup.version}
 
-  suspension: SuspensionSetup;
+        </span>
 
-  brakes: BrakeSetup;
+        <span className="setup-card-date">
 
-  tires: TireSetup;
+          {updatedDate}
 
-  engine: EngineSetup;
+        </span>
 
-  daq: DaqSetup;
+      </div>
 
-  drivetrain: DrivetrainSetup;
+      <div className="setup-card-body">
 
-  aero: AeroSetup;
+        <h3>
 
-  performance: PerformanceSetup;
+          {setup.name}
+
+        </h3>
+
+        <p>
+
+          {weather}
+
+        </p>
+
+        <p>
+
+          {track}
+
+        </p>
+
+      </div>
+
+      <div className="setup-card-actions">
+
+        <button
+          className="setup-card-edit"
+          onClick={onOpen}
+        >
+
+          Open
+
+        </button>
+
+        <button
+          className="setup-card-link"
+          onClick={onDuplicate}
+        >
+
+          Duplicate
+
+        </button>
+
+        <button
+          className="setup-card-link"
+          onClick={onDelete}
+        >
+
+          Delete
+
+        </button>
+
+      </div>
+
+    </div>
+
+  );
 
 }
