@@ -5,10 +5,10 @@ import { useSessionStore } from "../../store/sessionStore";
 import { useSetupStore } from "../../store/setupStore";
 
 const navigation = [
-  { label: "Mission Control", path: "/" },
-  { label: "Workspace", path: "/workspace" },
-  { label: "Run Review", path: "/runs" },
-  { label: "Dashboard", path: "/dashboard" },
+  { label: "Control", path: "/" },
+  { label: "Setup", path: "/workspace" },
+  { label: "Runs", path: "/runs" },
+  { label: "Performance", path: "/dashboard" },
   { label: "Database", path: "/database" },
   { label: "Compare", path: "/compare" },
 ];
