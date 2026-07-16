@@ -1,104 +1,53 @@
-import { Setup } from "../../types/setup";
+import { GeneralSetup } from "./general";
+import { SuspensionSetup } from "./suspension";
+import { BrakeSetup } from "./brakes";
+import { TireSetup } from "./tires";
+import { EngineSetup } from "./engine";
+import { DaqSetup } from "./daq";
+import { DrivetrainSetup } from "./drivetrain";
+import { AeroSetup } from "./aero";
+import { PerformanceSetup } from "./performance";
 
-interface Props {
-  setup: Setup;
-  onOpen(): void;
-  onDuplicate(): void;
-  onDelete(): void;
+export enum SetupStatus {
+  Baseline = "Baseline",
+  Development = "Development",
+  Approved = "Approved",
+  Competition = "Competition",
+  Archived = "Archived",
 }
 
-export default function SetupRow({
-  setup,
-  onOpen,
-  onDuplicate,
-  onDelete,
-}: Props) {
+export interface Setup {
 
-  const updatedDate = new Date(
-    setup.updatedAt
-  ).toLocaleDateString();
+  id: string;
 
-  const weather =
-    setup.general.weather || "Not Specified";
+  name: string;
 
-  const track =
-    setup.general.track || "Track not set";
+  version: number;
 
-  return (
+  status: SetupStatus;
 
-    <div className="setup-card-row">
+  createdAt: string;
 
-      <div className="setup-card-head">
+  updatedAt: string;
 
-        <span className="setup-card-version">
+  parentId?: string;
 
-          V{setup.version}
+  general: GeneralSetup;
 
-        </span>
+  suspension: SuspensionSetup;
 
-        <span className="setup-card-date">
+  brakes: BrakeSetup;
 
-          {updatedDate}
+  tires: TireSetup;
 
-        </span>
+  engine: EngineSetup;
 
-      </div>
+  daq: DaqSetup;
 
-      <div className="setup-card-body">
+  drivetrain: DrivetrainSetup;
 
-        <h3>
+  aero: AeroSetup;
 
-          {setup.name}
-
-        </h3>
-
-        <p>
-
-          {weather}
-
-        </p>
-
-        <p>
-
-          {track}
-
-        </p>
-
-      </div>
-
-      <div className="setup-card-actions">
-
-        <button
-          className="setup-card-edit"
-          onClick={onOpen}
-        >
-
-          Open
-
-        </button>
-
-        <button
-          className="setup-card-link"
-          onClick={onDuplicate}
-        >
-
-          Duplicate
-
-        </button>
-
-        <button
-          className="setup-card-link"
-          onClick={onDelete}
-        >
-
-          Delete
-
-        </button>
-
-      </div>
-
-    </div>
-
-  );
+  performance: PerformanceSetup;
 
 }
