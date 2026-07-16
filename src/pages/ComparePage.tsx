@@ -132,8 +132,6 @@ export default function SetupCompare() {
 
   return (
     <div className="app">
-      <TopNav />
-
       <div className="compare-shell compare-sheet-shell">
         <div className="compare-header compare-sheet-header">
           <div>
