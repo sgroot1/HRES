@@ -70,28 +70,47 @@
 ========================================================== */
 
 .mission-dashboard{
-
     display:grid;
-
     grid-template-columns:340px 340px minmax(0,1fr);
-
     gap:24px;
-
     align-items:start;
-
     margin-bottom:40px;
-
 }
 
 .mission-dashboard > *{
-
     min-width:0;
-
 }
-.mission-dashboard > *{
 
-    margin:0;
+.current-session-card,
+.health-card,
+.activity-card{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    background:var(--panel);
+    border:1px solid var(--border);
+    padding:28px;
+    box-shadow:var(--panel-shadow);
+}
 
+.current-session-card{
+    margin-bottom:0;
+}
+
+.health-card{
+    margin-bottom:0;
+}
+
+.activity-card{
+    margin-bottom:0;
+    overflow:auto;
+    max-height:720px;
+}
+
+@media (max-width: 1200px){
+    .mission-dashboard{
+        grid-template-columns:1fr;
+    }
 }
 /* ==========================================================
    ENGINEERING HEALTH
@@ -329,147 +348,40 @@
    ENGINEERING ACTIVITY
 ========================================================== */
 
-.activity-card{
-
-    display:flex;
-
-    flex-direction:column;
-
-    height:100%;
-
-    background:var(--panel);
-
-    border:1px solid var(--border);
-
-    padding:28px;
-
-    overflow:auto;
-
-    max-height:720px;
-
-}
-
 .activity-row{
-
     display:flex;
-
     justify-content:space-between;
-
     align-items:flex-start;
-
     gap:24px;
-
     padding:14px 0;
-
     border-bottom:1px solid var(--border);
-
 }
 
 .activity-row:last-child{
-
     border-bottom:none;
-
 }
 
 .activity-row strong{
-
     display:block;
-
     color:var(--text);
-
     font-size:14px;
-
 }
 
 .activity-description{
-
     margin-top:4px;
-
     color:var(--text-secondary);
-
     font-size:13px;
-
 }
 
 .activity-row span{
-
     color:var(--text-secondary);
-
     font-size:12px;
-
     white-space:nowrap;
-
 }
 
 .activity-empty{
-
     color:var(--text-secondary);
-
     padding:10px 0;
-
-}
-/* ==========================================================
-   CURRENT ACTIVITY
-========================================================== */
-
-.activity-card{
-
-    margin-top:32px;
-
-    background:var(--panel);
-
-    border:1px solid var(--border);
-
-    padding:24px;
-
-}
-
-.activity-row{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:12px 0;
-
-    border-bottom:1px solid var(--border);
-
-}
-
-.activity-row:last-child{
-
-    border-bottom:none;
-
-}
-
-.activity-row span{
-
-    color:var(--text-secondary);
-
-    font-size:12px;
-
-    text-transform:uppercase;
-
-    letter-spacing:.1em;
-
-}
-
-.activity-row strong{
-
-    color:var(--text);
-
-    font-size:14px;
-
-}
-
-.activity-empty{
-
-    color:var(--text-secondary);
-
-    padding:12px 0;
-
 }
 /* ==========================================================
    PAGE
