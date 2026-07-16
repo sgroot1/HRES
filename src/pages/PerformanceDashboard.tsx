@@ -1,5 +1,4 @@
 import { ChangeEvent, useRef, useState } from "react";
-import TopNav from "../components/layout/TopNav";
 import DriverPanel from "../components/editor/performance/DriverPanel";
 import EngineerPanel from "../components/editor/performance/EngineerPanel";
 import AnalysisPanel from "../components/editor/performance/AnalysisPanel";
