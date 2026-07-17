@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
-export type WorkspaceModule =
+import { useCatalogStore } from "../data/catalog";
+
+type WorkspaceModule =
   | "General"
   | "Suspension"
   | "Diff"
@@ -9,29 +11,75 @@ export type WorkspaceModule =
   | "Aero"
   | "Performance";
 
-interface WorkspaceStore {
-
+interface WorkspaceState {
+  moduleByCarId: Record<string, WorkspaceModule>;
   module: WorkspaceModule;
-
-  setModule(
-    module: WorkspaceModule
-  ): void;
-
+  syncToSelectedCar(): void;
+  setModule(module: WorkspaceModule): void;
 }
 
-export const useWorkspaceStore =
-create<WorkspaceStore>((set)=>({
+const STORAGE_KEY = "helios.workspace.v2";
 
-  module:"General",
+function loadPersistedModules(): Record<string, WorkspaceModule> {
+  if (typeof window === "undefined") return {};
+  const raw = window.localStorage.getItem(STORAGE_KEY);
+  if (!raw) return {};
 
-  setModule(module){
-
-    set({
-
-      module
-
-    });
-
+  try {
+    return JSON.parse(raw) as Record<string, WorkspaceModule>;
+  } catch {
+    return {};
   }
+}
 
-}));
+function persistModules(modules: Record<string, WorkspaceModule>) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(modules));
+}
+
+function getSelectedCarId() {
+  return useCatalogStore.getState().selectedCarId;
+}
+
+export const useWorkspaceStore = create<WorkspaceState>((set, get) => {
+  const selectedCarId = getSelectedCarId();
+  const moduleByCarId = loadPersistedModules();
+  const module = moduleByCarId[selectedCarId] ?? "General";
+
+  persistModules(moduleByCarId);
+
+  return {
+    moduleByCarId,
+    module,
+
+    syncToSelectedCar() {
+      const carId = getSelectedCarId();
+      const state = get();
+      const nextModule = state.moduleByCarId[carId] ?? "General";
+      set({ module: nextModule });
+    },
+
+    setModule(module) {
+      const carId = getSelectedCarId();
+      set((state) => {
+        const nextModuleByCarId = {
+          ...state.moduleByCarId,
+          [carId]: module,
+        };
+        persistModules(nextModuleByCarId);
+        return {
+          moduleByCarId: nextModuleByCarId,
+          module,
+        };
+      });
+    },
+  };
+});
+
+useCatalogStore.subscribe((state, previous) => {
+  if (state.selectedCarId !== previous.selectedCarId) {
+    useWorkspaceStore.getState().syncToSelectedCar();
+  }
+});
+
+export type { WorkspaceModule };
