@@ -32,6 +32,8 @@ export interface Setup {
 
   parentId?: string;
 
+  carId?: string;
+
   general: GeneralSetup;
 
   suspension: SuspensionSetup;
