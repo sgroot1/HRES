@@ -1,8 +1,11 @@
 import { create } from "zustand";
 
 import { getExampleSetups } from "../data/exampleSetups";
+import { useCatalogStore } from "../data/catalog";
 import { Setup, SetupStatus } from "../types/setup";
 import { useActivityStore } from "./activityStore";
+
+const STORAGE_KEY = "helios.setups.v2";
 
 const now = () => new Date().toISOString();
 
@@ -42,10 +45,18 @@ const createTireCorner = () => ({
   heatCycles: null,
 });
 
+interface PersistedSetupState {
+  setupsByCarId: Record<string, Setup[]>;
+  currentSetupIdByCarId: Record<string, string | null>;
+}
+
 interface SetupStore {
+  setupsByCarId: Record<string, Setup[]>;
+  currentSetupIdByCarId: Record<string, string | null>;
   setups: Setup[];
   currentSetup: Setup | null;
 
+  syncToSelectedCar(): void;
   loadExampleSetups(): void;
   createSetup(name: string): Setup;
   openSetup(id: string): void;
@@ -59,43 +70,192 @@ interface SetupStore {
   updateEngine(values: Partial<Setup["engine"]>): void;
 }
 
-export const useSetupStore = create<SetupStore>((set, get) => {
-  const syncCurrentSetup = (updated: Setup) => {
-    set((state) => ({
-      currentSetup: updated,
-      setups: state.setups.map((setup) =>
-        setup.id === updated.id ? updated : setup
-      ),
-    }));
-  };
+function loadPersistedState(): PersistedSetupState | null {
+  if (typeof window === "undefined") return null;
+  const raw = window.localStorage.getItem(STORAGE_KEY);
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw) as PersistedSetupState;
+  } catch {
+    return null;
+  }
+}
+
+function persistState(state: PersistedSetupState) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function getCarLabel(carId: string) {
+  const car = useCatalogStore.getState().cars.find((entry) => entry.id === carId);
+  return car?.name ?? carId.toUpperCase();
+}
+
+function getActiveCarId() {
+  return useCatalogStore.getState().selectedCarId;
+}
+
+function cloneExampleSetupsForCar(carId: string): Setup[] {
+  const carLabel = getCarLabel(carId);
+
+  return getExampleSetups().map((setup, index) => ({
+    ...structuredClone(setup),
+    id: crypto.randomUUID(),
+    carId,
+    name: index === 0 ? `${carLabel} Baseline` : setup.name.replace(/SDM26/gi, carLabel),
+    general: {
+      ...setup.general,
+      vehicle: carLabel,
+      setupName: index === 0 ? `${carLabel} Baseline` : setup.general.setupName.replace(/SDM26/gi, carLabel),
+    },
+  }));
+}
+
+function ensureCarDefaults(
+  state: PersistedSetupState,
+  carId: string,
+  shouldSeedExamples = false
+): PersistedSetupState {
+  const setups = state.setupsByCarId[carId] ?? [];
+  const currentSetupId = state.currentSetupIdByCarId[carId] ?? null;
+
+  if (setups.length === 0 && shouldSeedExamples) {
+    const seeded = cloneExampleSetupsForCar(carId);
+    return {
+      setupsByCarId: {
+        ...state.setupsByCarId,
+        [carId]: seeded,
+      },
+      currentSetupIdByCarId: {
+        ...state.currentSetupIdByCarId,
+        [carId]: seeded[0]?.id ?? null,
+      },
+    };
+  }
 
   return {
-    setups: [],
-    currentSetup: null,
+    setupsByCarId: {
+      ...state.setupsByCarId,
+      [carId]: setups,
+    },
+    currentSetupIdByCarId: {
+      ...state.currentSetupIdByCarId,
+      [carId]: currentSetupId,
+    },
+  };
+}
+
+function findSetupLocation(setupsByCarId: Record<string, Setup[]>, id: string) {
+  for (const [carId, setups] of Object.entries(setupsByCarId)) {
+    const setup = setups.find((item) => item.id === id);
+    if (setup) {
+      return { carId, setup };
+    }
+  }
+  return null;
+}
+
+function syncCarView(
+  carId: string,
+  state: Pick<PersistedSetupState, "setupsByCarId" | "currentSetupIdByCarId">
+) {
+  const setups = state.setupsByCarId[carId] ?? [];
+  const currentSetupId = state.currentSetupIdByCarId[carId] ?? setups[0]?.id ?? null;
+  const currentSetup = setups.find((setup) => setup.id === currentSetupId) ?? setups[0] ?? null;
+
+  return {
+    setups,
+    currentSetup,
+    currentSetupId,
+  };
+}
+
+function saveSnapshot(state: Pick<PersistedSetupState, "setupsByCarId" | "currentSetupIdByCarId">) {
+  persistState({
+    setupsByCarId: state.setupsByCarId,
+    currentSetupIdByCarId: state.currentSetupIdByCarId,
+  });
+}
+
+export const useSetupStore = create<SetupStore>((set, get) => {
+  const persisted = loadPersistedState();
+  const selectedCarId = getActiveCarId();
+  const initialState = ensureCarDefaults(
+    persisted ?? { setupsByCarId: {}, currentSetupIdByCarId: {} },
+    selectedCarId,
+    true
+  );
+  const initialView = syncCarView(selectedCarId, initialState);
+
+  saveSnapshot(initialState);
+
+  return {
+    setupsByCarId: initialState.setupsByCarId,
+    currentSetupIdByCarId: initialState.currentSetupIdByCarId,
+    setups: initialView.setups,
+    currentSetup: initialView.currentSetup,
+
+    syncToSelectedCar() {
+      const carId = getActiveCarId();
+      const state = get();
+      const normalized = ensureCarDefaults(
+        {
+          setupsByCarId: state.setupsByCarId,
+          currentSetupIdByCarId: state.currentSetupIdByCarId,
+        },
+        carId,
+        false
+      );
+      const view = syncCarView(carId, normalized);
+      set({
+        setupsByCarId: normalized.setupsByCarId,
+        currentSetupIdByCarId: normalized.currentSetupIdByCarId,
+        setups: view.setups,
+        currentSetup: view.currentSetup,
+      });
+    },
 
     loadExampleSetups() {
-      if (get().setups.length > 0) {
+      const carId = getActiveCarId();
+      const state = get();
+      if ((state.setupsByCarId[carId] ?? []).length > 0) {
         return;
       }
 
-      const examples = getExampleSetups();
+      const seeded = cloneExampleSetupsForCar(carId);
+      const nextState: PersistedSetupState = {
+        setupsByCarId: {
+          ...state.setupsByCarId,
+          [carId]: seeded,
+        },
+        currentSetupIdByCarId: {
+          ...state.currentSetupIdByCarId,
+          [carId]: seeded[0]?.id ?? null,
+        },
+      };
+      const view = syncCarView(carId, nextState);
 
       set({
-        setups: examples,
-        currentSetup: examples[0] ?? null,
+        setupsByCarId: nextState.setupsByCarId,
+        currentSetupIdByCarId: nextState.currentSetupIdByCarId,
+        setups: view.setups,
+        currentSetup: view.currentSetup,
       });
+      saveSnapshot(nextState);
 
       useActivityStore.getState().addActivity({
         type: "setup",
         title: "Example Setups Loaded",
-        description: `${examples.length} setups`,
+        description: `${seeded.length} setups for ${getCarLabel(carId)}`,
         severity: "info",
       });
     },
 
     createSetup(name) {
+      const carId = getActiveCarId();
+      const carName = getCarLabel(carId);
       const isBaseline = /baseline/i.test(name);
-
       const setup: Setup = {
         id: crypto.randomUUID(),
         name,
@@ -104,10 +264,11 @@ export const useSetupStore = create<SetupStore>((set, get) => {
         createdAt: now(),
         updatedAt: now(),
         parentId: undefined,
+        carId,
 
         general: {
           setupName: name,
-          vehicle: "",
+          vehicle: carName,
           driver: "",
           engineer: "",
           track: "",
@@ -166,15 +327,32 @@ export const useSetupStore = create<SetupStore>((set, get) => {
         performance: {},
       };
 
-      set((state) => ({
-        setups: [...state.setups, setup],
-        currentSetup: setup,
-      }));
+      set((state) => {
+        const nextSetups = [...(state.setupsByCarId[carId] ?? []), setup];
+        const nextState: PersistedSetupState = {
+          setupsByCarId: {
+            ...state.setupsByCarId,
+            [carId]: nextSetups,
+          },
+          currentSetupIdByCarId: {
+            ...state.currentSetupIdByCarId,
+            [carId]: setup.id,
+          },
+        };
+        const view = syncCarView(carId, nextState);
+        saveSnapshot(nextState);
+        return {
+          setupsByCarId: nextState.setupsByCarId,
+          currentSetupIdByCarId: nextState.currentSetupIdByCarId,
+          setups: view.setups,
+          currentSetup: view.currentSetup,
+        };
+      });
 
       useActivityStore.getState().addActivity({
         type: "setup",
         title: "Setup Created",
-        description: setup.name,
+        description: `${setup.name} (${carName})`,
         severity: "success",
       });
 
@@ -182,41 +360,76 @@ export const useSetupStore = create<SetupStore>((set, get) => {
     },
 
     openSetup(id) {
-      const setup = get().setups.find((s) => s.id === id) ?? null;
+      const state = get();
+      const location = findSetupLocation(state.setupsByCarId, id);
+      if (!location) return;
+
+      if (location.carId !== getActiveCarId()) {
+        useCatalogStore.getState().selectCar(location.carId);
+      }
+
+      const nextState: PersistedSetupState = {
+        setupsByCarId: state.setupsByCarId,
+        currentSetupIdByCarId: {
+          ...state.currentSetupIdByCarId,
+          [location.carId]: id,
+        },
+      };
+      const view = syncCarView(location.carId, nextState);
 
       set({
-        currentSetup: setup,
+        setupsByCarId: nextState.setupsByCarId,
+        currentSetupIdByCarId: nextState.currentSetupIdByCarId,
+        setups: view.setups,
+        currentSetup: view.currentSetup,
       });
+      saveSnapshot(nextState);
 
-      if (setup) {
-        useActivityStore.getState().addActivity({
-          type: "setup",
-          title: "Setup Opened",
-          description: setup.name,
-          severity: "info",
-        });
-      }
+      useActivityStore.getState().addActivity({
+        type: "setup",
+        title: "Setup Opened",
+        description: location.setup.name,
+        severity: "info",
+      });
     },
 
     duplicateSetup(id) {
-      const original = get().setups.find((s) => s.id === id);
-      if (!original) return;
+      const state = get();
+      const location = findSetupLocation(state.setupsByCarId, id);
+      if (!location) return;
 
       const copy: Setup = {
-        ...structuredClone(original),
+        ...structuredClone(location.setup),
         id: crypto.randomUUID(),
-        version: original.version + 1,
-        parentId: original.id,
-        name: `${original.name} v${original.version + 1}`,
+        version: location.setup.version + 1,
+        parentId: location.setup.id,
+        name: `${location.setup.name} v${location.setup.version + 1}`,
         status: SetupStatus.Development,
         createdAt: now(),
         updatedAt: now(),
+        carId: location.carId,
       };
 
-      set((state) => ({
-        setups: [...state.setups, copy],
-        currentSetup: copy,
-      }));
+      const nextSetups = [...(state.setupsByCarId[location.carId] ?? []), copy];
+      const nextState: PersistedSetupState = {
+        setupsByCarId: {
+          ...state.setupsByCarId,
+          [location.carId]: nextSetups,
+        },
+        currentSetupIdByCarId: {
+          ...state.currentSetupIdByCarId,
+          [location.carId]: copy.id,
+        },
+      };
+      const view = syncCarView(location.carId, nextState);
+
+      set({
+        setupsByCarId: nextState.setupsByCarId,
+        currentSetupIdByCarId: nextState.currentSetupIdByCarId,
+        setups: view.setups,
+        currentSetup: view.currentSetup,
+      });
+      saveSnapshot(nextState);
 
       useActivityStore.getState().addActivity({
         type: "setup",
@@ -227,28 +440,40 @@ export const useSetupStore = create<SetupStore>((set, get) => {
     },
 
     deleteSetup(id) {
-      const deleted = get().setups.find((s) => s.id === id);
+      const state = get();
+      const location = findSetupLocation(state.setupsByCarId, id);
+      if (!location) return;
 
-      if (deleted) {
-        useActivityStore.getState().addActivity({
-          type: "setup",
-          title: "Setup Deleted",
-          description: deleted.name,
-          severity: "warning",
-        });
-      }
-
-      set((state) => {
-        const remaining = state.setups.filter((s) => s.id !== id);
-
-        return {
-          setups: remaining,
-          currentSetup:
-            state.currentSetup?.id === id
-              ? remaining[remaining.length - 1] ?? null
-              : state.currentSetup,
-        };
+      useActivityStore.getState().addActivity({
+        type: "setup",
+        title: "Setup Deleted",
+        description: location.setup.name,
+        severity: "warning",
       });
+
+      const remaining = (state.setupsByCarId[location.carId] ?? []).filter((setup) => setup.id !== id);
+      const nextState: PersistedSetupState = {
+        setupsByCarId: {
+          ...state.setupsByCarId,
+          [location.carId]: remaining,
+        },
+        currentSetupIdByCarId: {
+          ...state.currentSetupIdByCarId,
+          [location.carId]:
+            state.currentSetupIdByCarId[location.carId] === id
+              ? remaining[remaining.length - 1]?.id ?? null
+              : state.currentSetupIdByCarId[location.carId] ?? null,
+        },
+      };
+      const view = syncCarView(location.carId, nextState);
+
+      set({
+        setupsByCarId: nextState.setupsByCarId,
+        currentSetupIdByCarId: nextState.currentSetupIdByCarId,
+        setups: view.setups,
+        currentSetup: view.currentSetup,
+      });
+      saveSnapshot(nextState);
     },
 
     updateGeneral(values) {
@@ -264,7 +489,29 @@ export const useSetupStore = create<SetupStore>((set, get) => {
         updatedAt: now(),
       };
 
-      syncCurrentSetup(updated);
+      const carId = current.carId ?? getActiveCarId();
+      const state = get();
+      const nextSetups = (state.setupsByCarId[carId] ?? []).map((setup) =>
+        setup.id === updated.id ? updated : setup
+      );
+      const nextState: PersistedSetupState = {
+        setupsByCarId: {
+          ...state.setupsByCarId,
+          [carId]: nextSetups,
+        },
+        currentSetupIdByCarId: {
+          ...state.currentSetupIdByCarId,
+          [carId]: updated.id,
+        },
+      };
+      const view = syncCarView(carId, nextState);
+      set({
+        setupsByCarId: nextState.setupsByCarId,
+        currentSetupIdByCarId: nextState.currentSetupIdByCarId,
+        setups: view.setups,
+        currentSetup: view.currentSetup,
+      });
+      saveSnapshot(nextState);
     },
 
     updateSuspension(values) {
@@ -280,7 +527,29 @@ export const useSetupStore = create<SetupStore>((set, get) => {
         updatedAt: now(),
       };
 
-      syncCurrentSetup(updated);
+      const carId = current.carId ?? getActiveCarId();
+      const state = get();
+      const nextSetups = (state.setupsByCarId[carId] ?? []).map((setup) =>
+        setup.id === updated.id ? updated : setup
+      );
+      const nextState: PersistedSetupState = {
+        setupsByCarId: {
+          ...state.setupsByCarId,
+          [carId]: nextSetups,
+        },
+        currentSetupIdByCarId: {
+          ...state.currentSetupIdByCarId,
+          [carId]: updated.id,
+        },
+      };
+      const view = syncCarView(carId, nextState);
+      set({
+        setupsByCarId: nextState.setupsByCarId,
+        currentSetupIdByCarId: nextState.currentSetupIdByCarId,
+        setups: view.setups,
+        currentSetup: view.currentSetup,
+      });
+      saveSnapshot(nextState);
     },
 
     updateBrakes(values) {
@@ -296,7 +565,29 @@ export const useSetupStore = create<SetupStore>((set, get) => {
         updatedAt: now(),
       };
 
-      syncCurrentSetup(updated);
+      const carId = current.carId ?? getActiveCarId();
+      const state = get();
+      const nextSetups = (state.setupsByCarId[carId] ?? []).map((setup) =>
+        setup.id === updated.id ? updated : setup
+      );
+      const nextState: PersistedSetupState = {
+        setupsByCarId: {
+          ...state.setupsByCarId,
+          [carId]: nextSetups,
+        },
+        currentSetupIdByCarId: {
+          ...state.currentSetupIdByCarId,
+          [carId]: updated.id,
+        },
+      };
+      const view = syncCarView(carId, nextState);
+      set({
+        setupsByCarId: nextState.setupsByCarId,
+        currentSetupIdByCarId: nextState.currentSetupIdByCarId,
+        setups: view.setups,
+        currentSetup: view.currentSetup,
+      });
+      saveSnapshot(nextState);
     },
 
     updateTires(values) {
@@ -312,7 +603,29 @@ export const useSetupStore = create<SetupStore>((set, get) => {
         updatedAt: now(),
       };
 
-      syncCurrentSetup(updated);
+      const carId = current.carId ?? getActiveCarId();
+      const state = get();
+      const nextSetups = (state.setupsByCarId[carId] ?? []).map((setup) =>
+        setup.id === updated.id ? updated : setup
+      );
+      const nextState: PersistedSetupState = {
+        setupsByCarId: {
+          ...state.setupsByCarId,
+          [carId]: nextSetups,
+        },
+        currentSetupIdByCarId: {
+          ...state.currentSetupIdByCarId,
+          [carId]: updated.id,
+        },
+      };
+      const view = syncCarView(carId, nextState);
+      set({
+        setupsByCarId: nextState.setupsByCarId,
+        currentSetupIdByCarId: nextState.currentSetupIdByCarId,
+        setups: view.setups,
+        currentSetup: view.currentSetup,
+      });
+      saveSnapshot(nextState);
     },
 
     updateEngine(values) {
@@ -328,7 +641,35 @@ export const useSetupStore = create<SetupStore>((set, get) => {
         updatedAt: now(),
       };
 
-      syncCurrentSetup(updated);
+      const carId = current.carId ?? getActiveCarId();
+      const state = get();
+      const nextSetups = (state.setupsByCarId[carId] ?? []).map((setup) =>
+        setup.id === updated.id ? updated : setup
+      );
+      const nextState: PersistedSetupState = {
+        setupsByCarId: {
+          ...state.setupsByCarId,
+          [carId]: nextSetups,
+        },
+        currentSetupIdByCarId: {
+          ...state.currentSetupIdByCarId,
+          [carId]: updated.id,
+        },
+      };
+      const view = syncCarView(carId, nextState);
+      set({
+        setupsByCarId: nextState.setupsByCarId,
+        currentSetupIdByCarId: nextState.currentSetupIdByCarId,
+        setups: view.setups,
+        currentSetup: view.currentSetup,
+      });
+      saveSnapshot(nextState);
     },
   };
+});
+
+useCatalogStore.subscribe((state, previous) => {
+  if (state.selectedCarId !== previous.selectedCarId) {
+    useSetupStore.getState().syncToSelectedCar();
+  }
 });
