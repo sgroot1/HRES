@@ -1,4 +1,4 @@
-import { Run, RunLog, RunLogCorner } from "../../../types/run";
+import { Run, RunLog, RunLogCorner, RunStatus } from "../../../types/run";
 
 interface Props {
   run: Run;
@@ -18,26 +18,11 @@ function CornerBlock({
     <div className="runlog-corner-card">
       <h3>{label}</h3>
       <div className="runlog-corner-grid">
-        <label className="field">
-          <span>Cold PSI</span>
-          <input value={value.coldPsi} onChange={(event) => onChange({ ...value, coldPsi: event.target.value })} />
-        </label>
-        <label className="field">
-          <span>Hot PSI</span>
-          <input value={value.hotPsi} onChange={(event) => onChange({ ...value, hotPsi: event.target.value })} />
-        </label>
-        <label className="field">
-          <span>Outside</span>
-          <input value={value.tempOutside} onChange={(event) => onChange({ ...value, tempOutside: event.target.value })} />
-        </label>
-        <label className="field">
-          <span>Middle</span>
-          <input value={value.tempMiddle} onChange={(event) => onChange({ ...value, tempMiddle: event.target.value })} />
-        </label>
-        <label className="field">
-          <span>Inside</span>
-          <input value={value.tempInside} onChange={(event) => onChange({ ...value, tempInside: event.target.value })} />
-        </label>
+        <label className="field"><span>Cold PSI</span><input value={value.coldPsi} onChange={(event) => onChange({ ...value, coldPsi: event.target.value })} placeholder="24.5" /></label>
+        <label className="field"><span>Hot PSI</span><input value={value.hotPsi} onChange={(event) => onChange({ ...value, hotPsi: event.target.value })} placeholder="28.0" /></label>
+        <label className="field"><span>Outside</span><input value={value.tempOutside} onChange={(event) => onChange({ ...value, tempOutside: event.target.value })} placeholder="108" /></label>
+        <label className="field"><span>Middle</span><input value={value.tempMiddle} onChange={(event) => onChange({ ...value, tempMiddle: event.target.value })} placeholder="112" /></label>
+        <label className="field"><span>Inside</span><input value={value.tempInside} onChange={(event) => onChange({ ...value, tempInside: event.target.value })} placeholder="110" /></label>
       </div>
     </div>
   );
@@ -53,8 +38,18 @@ export default function RunLogSheet({ run, onChange }: Props) {
   return (
     <section className="runlog-sheet">
       <div className="runlog-header">
-        <div className="compare-kicker">Run Log</div>
-        <h2>Run {run.number}</h2>
+        <div>
+          <div className="compare-kicker">Run Log</div>
+          <h2>Run {run.number}</h2>
+        </div>
+        <label className="field run-status-field">
+          <span>Status</span>
+          <select value={run.status} onChange={(event) => onChange({ status: event.target.value as RunStatus })}>
+            {Object.values(RunStatus).map((status) => (
+              <option key={status} value={status}>{status}</option>
+            ))}
+          </select>
+        </label>
       </div>
 
       <div className="runlog-grid runlog-grid-top">
@@ -102,7 +97,7 @@ export default function RunLogSheet({ run, onChange }: Props) {
 
       <label className="field runlog-notes-field">
         <span>Notes</span>
-        <textarea value={log.notes} rows={4} onChange={(event) => patchLog({ notes: event.target.value })} />
+        <textarea value={log.notes} rows={4} onChange={(event) => patchLog({ notes: event.target.value })} placeholder="Driver comments, lap tags, flag conditions..." />
       </label>
     </section>
   );
