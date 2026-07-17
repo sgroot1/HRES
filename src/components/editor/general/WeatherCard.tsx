@@ -2,135 +2,66 @@ import { useMemo } from "react";
 import { useSetupStore } from "../../../store/setupStore";
 import { useWeather } from "../../../hooks/useWeather";
 
-export default function WeatherCard(){
+export default function WeatherCard() {
+  const setup = useSetupStore((s) => s.currentSetup);
+  const update = useSetupStore((s) => s.updateGeneral);
+  const trackName = setup?.general?.track ?? "";
 
-    const setup=
-    useSetupStore(
-        s=>s.currentSetup
-    );
+  useWeather(trackName);
 
-    const update=
-    useSetupStore(
-        s=>s.updateGeneral
-    );
+  const weatherSummary = useMemo(() => {
+    if (!setup?.general) return null;
 
-    const trackName = setup?.general?.track ?? "";
+    const weather = setup.general.weather;
+    const temp = setup.general.airTemperature;
+    const humidity = setup.general.humidity;
+    const wind = setup.general.wind;
 
-    useWeather(trackName);
+    return [
+      weather ? String(weather) : "--",
+      temp != null ? `${temp.toFixed(1)}°C` : "--",
+      humidity != null ? `${humidity}%` : "--",
+      wind ? String(wind) : "--",
+    ];
+  }, [setup?.general]);
 
-    const weatherSummary = useMemo(() => {
+  if (!setup) return null;
 
-        if (!setup?.general) return null;
+  const general = setup.general;
 
-        const weather = setup.general.weather;
-        const temp = setup.general.airTemperature;
-        const humidity = setup.general.humidity;
-        const wind = setup.general.wind;
+  return (
+    <div className="general-column compact-stack">
+      <h2>CONDITIONS</h2>
 
-        return [
-          weather ? String(weather) : "--",
-          temp != null ? `${temp.toFixed(1)}°C` : "--",
-          humidity != null ? `${humidity}%` : "--",
-          wind ? String(wind) : "--",
-        ];
+      <div className="weather-summary">
+        {weatherSummary?.map((value, index) => (
+          <div key={`${value}-${index}`} className="weather-pill">
+            <span>{["Weather", "Temp", "Humidity", "Wind"][index]}</span>
+            <strong>{value}</strong>
+          </div>
+        ))}
+      </div>
 
-    }, [setup?.general]);
-
-    if(!setup) return null;
-
-    const general=setup.general;
-
-    return(
-
-        <div className="general-column compact-stack">
-
-            <h2>
-
-                CONDITIONS
-
-            </h2>
-
-            <div className="weather-summary">
-                {weatherSummary?.map((value, index) => (
-                    <div key={`${value}-${index}`} className="weather-pill">
-                        <span>{["Weather", "Temp", "Humidity", "Wind"][index]}</span>
-                        <strong>{value}</strong>
-                    </div>
-                ))}
-            </div>
-
-            <div className="weather-meta-grid">
-
-                <div className="field compact-field">
-
-                    <label>
-
-                        Date
-
-                    </label>
-
-                    <input
-
-                        value={String(general.date ?? "")}
-
-                        readOnly
-
-                    />
-
-                </div>
-
-                <div className="field compact-field">
-
-                    <label>
-
-                        Time
-
-                    </label>
-
-                    <input
-
-                        value={String(general.time ?? "")}
-
-                        readOnly
-
-                    />
-
-                </div>
-
-                <div className="field compact-field weather-track-temp">
-
-                    <label>
-
-                        Track Temp
-
-                    </label>
-
-                    <input
-
-                        type="number"
-
-                        value={general.trackTemperature ?? ""}
-
-                        onChange={e=>
-
-                            update({
-
-                                trackTemperature:
-
-                                Number(e.target.value)
-
-                            })
-
-                        }
-
-                    />
-
-                </div>
-
-            </div>
-
+      <div className="weather-meta-grid">
+        <div className="field compact-field">
+          <label>Date</label>
+          <input value={String(general.date ?? "")} readOnly />
         </div>
 
-    );
+        <div className="field compact-field">
+          <label>Time</label>
+          <input value={String(general.time ?? "")} readOnly />
+        </div>
 
+        <div className="field compact-field weather-track-temp">
+          <label>Track Temp</label>
+          <input
+            type="number"
+            value={general.trackTemperature ?? ""}
+            onChange={(e) => update({ trackTemperature: e.target.value === "" ? null : Number(e.target.value) })}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
