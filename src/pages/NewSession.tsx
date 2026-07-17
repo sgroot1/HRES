@@ -1,31 +1,35 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { useCatalogStore } from "../data/catalog";
+import { useRunStore } from "../store/runStore";
 import { useSessionStore } from "../store/sessionStore";
 import { useSetupStore } from "../store/setupStore";
-import { createCatalogStore } from "../data/catalog";
-
-const catalog = createCatalogStore();
 
 export default function NewSession() {
   const navigate = useNavigate();
+
   const createSession = useSessionStore((state) => state.createSession);
   const createSetup = useSetupStore((state) => state.createSetup);
   const openSetup = useSetupStore((state) => state.openSetup);
+  const createRun = useRunStore((state) => state.createRun);
+
+  const tracks = useCatalogStore((state) => state.tracks);
+  const drivers = useCatalogStore((state) => state.drivers);
+  const cars = useCatalogStore((state) => state.cars);
+  const addTrack = useCatalogStore((state) => state.addTrack);
+  const addDriver = useCatalogStore((state) => state.addDriver);
+  const addCar = useCatalogStore((state) => state.addCar);
+  const selectCarByName = useCatalogStore((state) => state.selectCarByName);
 
   const [name, setName] = useState("");
-  const [vehicle, setVehicle] = useState("SDM26");
+  const [vehicle, setVehicle] = useState(cars[0]?.name ?? "SDM26");
   const [track, setTrack] = useState("");
   const [driver, setDriver] = useState("");
   const [engineer, setEngineer] = useState("");
   const [customTrack, setCustomTrack] = useState("");
   const [customDriver, setCustomDriver] = useState("");
   const [customCar, setCustomCar] = useState("");
-  const [catalogVersion, setCatalogVersion] = useState(0);
-
-  const catalogState = catalog.getState();
-  const trackOptions = catalogState.tracks.map((entry) => entry.name);
-  const driverOptions = catalogState.drivers.map((entry) => entry.name);
-  const carOptions = catalogState.cars.map((entry) => entry.name);
 
   const ready = useMemo(() => name.trim() && track && driver.trim(), [name, track, driver]);
 
@@ -54,9 +58,9 @@ export default function NewSession() {
             <label className="field">
               <span>Vehicle</span>
               <select value={vehicle} onChange={(e) => setVehicle(e.target.value)}>
-                {carOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
+                {cars.map((option) => (
+                  <option key={option.id} value={option.name}>
+                    {option.name}
                   </option>
                 ))}
               </select>
@@ -66,9 +70,9 @@ export default function NewSession() {
               <span>Track</span>
               <select value={track} onChange={(e) => setTrack(e.target.value)}>
                 <option value="">Select Track</option>
-                {trackOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
+                {tracks.map((option) => (
+                  <option key={option.id} value={option.name}>
+                    {option.name}
                   </option>
                 ))}
               </select>
@@ -78,9 +82,9 @@ export default function NewSession() {
               <span>Driver</span>
               <select value={driver} onChange={(e) => setDriver(e.target.value)}>
                 <option value="">Select Driver</option>
-                {driverOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
+                {drivers.map((option) => (
+                  <option key={option.id} value={option.name}>
+                    {option.name}
                   </option>
                 ))}
               </select>
@@ -102,15 +106,27 @@ export default function NewSession() {
               <div className="new-session-grid compact">
                 <label className="field">
                   <span>New Track</span>
-                  <input value={customTrack} onChange={(e) => setCustomTrack(e.target.value)} placeholder="e.g. Monza" />
+                  <input
+                    value={customTrack}
+                    onChange={(e) => setCustomTrack(e.target.value)}
+                    placeholder="e.g. Monza"
+                  />
                 </label>
                 <label className="field">
                   <span>New Driver</span>
-                  <input value={customDriver} onChange={(e) => setCustomDriver(e.target.value)} placeholder="e.g. Riley Brooks" />
+                  <input
+                    value={customDriver}
+                    onChange={(e) => setCustomDriver(e.target.value)}
+                    placeholder="e.g. Riley Brooks"
+                  />
                 </label>
                 <label className="field">
                   <span>New Car</span>
-                  <input value={customCar} onChange={(e) => setCustomCar(e.target.value)} placeholder="e.g. SDM28" />
+                  <input
+                    value={customCar}
+                    onChange={(e) => setCustomCar(e.target.value)}
+                    placeholder="e.g. SDM28"
+                  />
                 </label>
               </div>
               <div className="new-session-actions">
@@ -118,18 +134,18 @@ export default function NewSession() {
                   className="secondary-action"
                   onClick={() => {
                     if (customTrack.trim()) {
-                      catalog.addTrack(customTrack.trim());
+                      addTrack(customTrack.trim());
                       setCustomTrack("");
                     }
                     if (customDriver.trim()) {
-                      catalog.addDriver(customDriver.trim());
+                      addDriver(customDriver.trim());
                       setCustomDriver("");
                     }
                     if (customCar.trim()) {
-                      catalog.addCar(customCar.trim());
+                      const entry = addCar(customCar.trim());
+                      setVehicle(entry.name);
                       setCustomCar("");
                     }
-                    setCatalogVersion((value) => value + 1);
                   }}
                 >
                   Save to Database
@@ -143,6 +159,7 @@ export default function NewSession() {
               className="primary-action"
               onClick={() => {
                 if (!ready) return;
+                selectCarByName(vehicle);
                 createSession({ name, vehicle, track, driver, engineer });
                 const baseline = createSetup(`${vehicle} Baseline`);
                 openSetup(baseline.id);
