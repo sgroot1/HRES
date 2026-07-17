@@ -1,20 +1,16 @@
-import CornerGrid, {
-  CornerGridRow,
-} from "../../engineering/CornerGrid";
-
+import CornerGrid, { CornerGridRow } from "../../engineering/CornerGrid";
+import { getCarProfile } from "../../../data/carProfiles";
+import { useCatalogStore } from "../../../data/catalog";
 import { useSuspension } from "../../../hooks/useSuspension";
 
 export default function SpringPanel() {
+  const { suspension, update } = useSuspension();
+  const selectedCarId = useCatalogStore((state) => state.selectedCarId);
+  const profile = getCarProfile(selectedCarId);
 
-  const {
-    suspension,
-    update,
-  } = useSuspension();
-
-  if (!suspension) return null;
+  if (!suspension || !profile.showSpringRate) return null;
 
   const rows: CornerGridRow[] = [
-
     {
       label: "Spring Rate",
       unit: "lb/in",
@@ -25,7 +21,6 @@ export default function SpringPanel() {
         rr: suspension.rr.springRate,
       },
     },
-
     {
       label: "Preload",
       unit: "turns",
@@ -36,38 +31,22 @@ export default function SpringPanel() {
         rr: suspension.rr.springPreload,
       },
     },
-
   ];
 
-  function updateRow(
-    row: number,
-    corner: "lf" | "rf" | "lr" | "rr",
-    value: number
-  ) {
-
+  function updateRow(row: number, corner: "lf" | "rf" | "lr" | "rr", value: number) {
     const copy = structuredClone(suspension);
 
     switch (row) {
-
       case 0:
         copy[corner].springRate = value;
         break;
-
       case 1:
         copy[corner].springPreload = value;
         break;
-
     }
 
     update(copy);
-
   }
 
-  return (
-    <CornerGrid
-      title="Springs"
-      rows={rows}
-      onChange={updateRow}
-    />
-  );
+  return <CornerGrid title="Springs" rows={rows} onChange={updateRow} />;
 }

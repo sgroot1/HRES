@@ -1,4 +1,4 @@
-import { createCatalogStore } from "../../../data/catalog";
+import { useCatalogStore } from "../../../data/catalog";
 import { useTires } from "../../../hooks/useTires";
 import GeometryPanel from "./GeometryPanel";
 import SpringPanel from "./SpringPanel";
@@ -9,7 +9,7 @@ export default function SuspensionSection() {
 
   const { suspension } = useSuspension();
   const { tires, update: updateTires } = useTires();
-  const tireInventory = createCatalogStore().getState().tires;
+  const tireInventory = useCatalogStore((state) => state.tires);
 
   const updateTirePressure = (corner: "lf" | "rf" | "lr" | "rr", value: string) => {
     if (!tires) return;
