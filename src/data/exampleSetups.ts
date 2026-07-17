@@ -63,6 +63,7 @@ function createExampleSetup(config: {
     createdAt: now(config.createdAt),
     updatedAt: now(config.updatedAt),
     parentId: undefined,
+    carId: config.general.vehicle.toLowerCase().replace(/[^a-z0-9]+/g, ""),
     general: config.general,
     suspension: config.suspension,
     brakes: config.brakes,
